@@ -21,16 +21,5 @@ public:
 	void setStringValue(string & value) {	OFXIMGUIPARAM_NOTICE << value ; }
 	void setButtonValue(bool & value) {		OFXIMGUIPARAM_NOTICE << value ; }
 	void setComboValue(int & value) {		OFXIMGUIPARAM_NOTICE << value ; }
-	void setOptionsValue(string & value) {	OFXIMGUIPARAM_NOTICE << "//////" <<value ; }
-
-	//	void setValue(float & value) { cout << value ; }
-	//	void setValue(int & value) { cout << value ; }
-	//	void setValue(bool & value) { cout << value ; }
-	//	void setValue(string & value) { cout << value ; }
-
-	//	template<typename T>
-	//	void setValue(ofxSyncedParameter<ofParameter<T>> & value) { cout << value ; }
-	//	void setValue(ofParameter<int> & value) { cout << value ; }
-	//	void setValue(ofParameter<bool> & value) { cout << value ; }
-	//	void setValue(ofParameter<string> & value) { cout << value ; }
+	void setOptionsValue(string & value) {	OFXIMGUIPARAM_NOTICE << value ; }
 };

@@ -3,7 +3,7 @@
 #include "ofxImGui.h"
 
 #define OFXIMGUIPARAM_DELIMITER "||"
-#define OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH 256
+#define OFXIMGUIPARAM_STRING_MAX_LENGTH 256
 
 #define OFXIMGUIPARAM_VERBOSE ofLogVerbose(string(__func__))
 #define OFXIMGUIPARAM_NOTICE ofLogNotice(string(__func__))
@@ -89,7 +89,6 @@ private:
 	vector<string> comboItems;
 	int sliderWidth = 180;
 	int inputIntWidth = 80;
-//	std::string delimiter = "/|/";
 
 
 	//-----------
@@ -174,7 +173,7 @@ class ofxImGuiParameter: public ofParameter<T>
 public:
     
 	T value;
-	char str[OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH];
+	char str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
 
 	// use constructors of parent class
 	// http://stackoverflow.com/questions/347358/inheriting-constructors
@@ -294,61 +293,45 @@ public:
 	//-----------
 	void drawTextWrapped()
 	{
-		getOfParameter();
+		getOfString();
 
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
+		static float wrap_width = sliderWidth;
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + wrap_width);
+
 		ImGui::Text(this->getName().c_str());
-		ImGui::TextWrapped(
-			this->get().c_str());
+		ImGui::TextWrapped(str);
+
+		// draw custom frame
+		ImGui::GetWindowDrawList()->AddRectFilled(
+			ImGui::GetItemBoxMin(),
+			ImVec2(ImGui::GetItemBoxMax().x + ImGuiStyleVar_FramePadding, ImGui::GetItemBoxMax().y + ImGuiStyleVar_FramePadding),
+			ImColor(0,255,255,25)
+		);
+
+		ImGui::PopTextWrapPos();
 		ImGui::PopItemWidth();
 		ImGui::PopID();
 
-		setOfParameter();
+		setOfString();
 	}
 
 	//-----------
 	void drawInputText()
 	{
-
-		// here we have a problem, 
-		// Imgui  does not handle strings.
-		// only char *s (const char * is not accepted either..)
-		// so we need to convert string to char per frame...
-		// http://stackoverflow.com/questions/347949/how-to-convert-a-stdstring-to-const-char-or-char
-		// http://stackoverflow.com/questions/5844040/c-setting-a-static-char-array-with-a-string
-
-
-		getOfParameter();
-
-		//		char IDname[100];   // array to hold the result.
-		//		strcpy(IDname, "##InputText"); // copy string one into the result.
-		//		strcat(IDname, this->getName().c_str()); // append string two to the result.
-
-				// convert our string to static char
-		static char str[OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH];
-		int length = strlen(this->get().c_str());
-		strncpy(str, this->value.c_str(), length);
+		getOfString();
 
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
 		ImGui::Text(this->getName().c_str());
 		if (ImGui::InputText(
-			this->getName().c_str(),
+			"##InputText",
 			str,
-			OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH
+			OFXIMGUIPARAM_STRING_MAX_LENGTH
 		))
 		{
-			int newlength = strlen(str);
-			if (length != newlength)
-			{
-				OFXIMGUIPARAM_VERBOSE << "str  in  [" << this->value << "]";
-				OFXIMGUIPARAM_VERBOSE << "size in  [" << length << "]";
-				OFXIMGUIPARAM_VERBOSE << "str  out [" << str << "]";
-				OFXIMGUIPARAM_VERBOSE << "size out [" << newlength << "]";
-
-				this->set(this->getName(), str);
-			}
+			setOfString();
 		}
 		ImGui::PopItemWidth();
 		ImGui::PopID();
@@ -357,12 +340,7 @@ public:
 	//-----------
 	void drawInputTextMultiline()
 	{
-		getOfParameter();
-
-		// convert our string to static char
-
-		int length = strlen(this->value.c_str());
-		strncpy(str, this->value.c_str(), length);
+		getOfString();
 
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
@@ -370,19 +348,10 @@ public:
 		if (ImGui::InputTextMultiline(
 			"##InputText",
 			str,
-			OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH
+			OFXIMGUIPARAM_STRING_MAX_LENGTH
 		))
 		{
-			int newlength = strlen(str);
-			if (length != newlength)
-			{
-				OFXIMGUIPARAM_VERBOSE << "str  in  [" << this->value << "]";
-				OFXIMGUIPARAM_VERBOSE << "size in  [" << length << "]";
-				OFXIMGUIPARAM_VERBOSE << "str  out [" << str << "]";
-				OFXIMGUIPARAM_VERBOSE << "size out [" << newlength << "]";
-
-				this->set(this->getName(), str);
-			}
+			setOfString();
 		}
 		ImGui::PopItemWidth();
 		ImGui::PopID();
@@ -460,7 +429,47 @@ public:
     }
     
 	//-----------
-	bool getOfParameter()
+	inline bool getOfString()
+	{
+
+		bool didChange = false;
+		int length		= strlen(this->get().c_str());
+		int oldlength	= strlen(str);
+
+		if (oldlength != length)
+		{
+			OFXIMGUIPARAM_VERBOSE << "str  in  [" << this->get() << "]";
+			OFXIMGUIPARAM_VERBOSE << "size in  [" << length << "]";
+			OFXIMGUIPARAM_VERBOSE << "str  out [" << str << "]";
+			OFXIMGUIPARAM_VERBOSE << "size out [" << oldlength << "]";
+			strncpy(str, this->get().c_str(), length);
+			didChange = true;
+		}
+		return didChange;
+	}
+
+	//-----------
+	inline 	bool setOfString()
+	{
+		bool didChange = false;
+		int length = strlen(this->get().c_str());
+		int newlength = strlen(str);
+
+		if (newlength != length)
+		{
+			OFXIMGUIPARAM_VERBOSE << "str  in  [" << this->get() << "]";
+			OFXIMGUIPARAM_VERBOSE << "size in  [" << length << "]";
+			OFXIMGUIPARAM_VERBOSE << "str  out [" << str << "]";
+			OFXIMGUIPARAM_VERBOSE << "size out [" << newlength << "]";
+			this->set(this->getName(), str);
+			didChange = true;
+		}
+		return didChange;
+
+	}
+
+	//-----------
+	inline bool getOfParameter()
 	{
 		bool didChange = false;
 		if (this->get() != this->value)
@@ -473,7 +482,7 @@ public:
 	}
 
 	//-----------
-	bool setOfParameter()
+	inline bool setOfParameter()
 	{
 		bool didChange = false;
 		if (this->get() != this->value)
