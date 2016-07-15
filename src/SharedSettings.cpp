@@ -21,17 +21,17 @@ SharedSettings::SharedSettings() {
 	// tests
 	syncParams.add(float_t.set("float test", 0.5f, 0.0f, 1.0f));
 	syncParams.add(int_t.set("int test", 1, 1, 1000));
+	syncParams.add(float_t1.set("float test 11111", 0.2f, 0.0f, 1.0f));
+	syncParams.add(int_t1.set("int test 11111", 1234, 1, 1000));
+
 	syncParams.add(bool_t.set("bool test", true));
 	syncParams.add(OSD_string_t.set("OSD text", "lorem ipsum", "a", "aaaa"));
-
 	syncParams.add(button_t.set("button test", false));
+	syncParams.add(Input_string_t.set("Input text field", "try to edit string"));
 
-	string items = "Aaaaaaa/|/bbbbbbbb/|/ccccccc/|/dddddddddd/|/eeeeeeee/|/fffffffff/|/gggggggggggg/|/hhhhhhhh";
-//	syncParams.add(Input_string_t.set("Input text field", items));
-//	cout << "on SETUP:::: " << Input_string_t.get() << endl;
-
-	syncParams.add(combo_options_t.set("combo_options_t", items));
-	syncParams.add(combo_value_t.setCombo("combo", 1));
+	string items = "Aaaaaaa||bbbbbbbb||ccccccc||dddddddddd||eeeeeeee||fffffffff||gggggggggggg||hhhhhhhh";
+	syncParams.add(combo_options_t.set("combo options", items));
+	syncParams.add(combo_value_t.setCombo("combo value", 1));
 }
 /*
 bool SharedSettings::addListeners(* camera) {

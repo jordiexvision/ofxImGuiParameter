@@ -2,7 +2,7 @@
 #include "ofMain.h"
 #include "ofxImGui.h"
 
-#define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
+#define OFXIMGUIPARAM_DELIMITER "||"
 #define OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH 256
 
 #define OFXIMGUIPARAM_VERBOSE ofLogVerbose(string(__func__))
@@ -55,12 +55,15 @@ public:
 		return *this;
 	};
 
+	//-----------
 	void drawCombo()
 	{
 		getOfParameter();
 
-		ImGui::Text(this->getName().c_str());
 
+		ImGui::PushID(this->getName().c_str());
+		ImGui::PushItemWidth(sliderWidth);
+		ImGui::Text(this->getName().c_str());
 		// use vectors as const char *
 		// https://github.com/ocornut/imgui/issues/673
 		ImGui::Combo("##Combo", &value,
@@ -70,7 +73,9 @@ public:
 			*out_text = vector->at(idx).c_str();
 			return true;
 		}, reinterpret_cast<void*>(&comboItems), comboItems.size());
-		
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+
 		setOfParameter();
 	}
 
@@ -83,8 +88,12 @@ private:
 	string options;
 	ofParameter<string>& stringRef;
 	vector<string> comboItems;
-	std::string delimiter = "/|/";
+	int sliderWidth = 180;
+	int inputIntWidth = 80;
+//	std::string delimiter = "/|/";
 
+
+	//-----------
 	int parseOptions(string incoming_str) {
 		if (incoming_str == "") {
 			OFXIMGUIPARAM_VERBOSE << "string is empty!" ;
@@ -97,11 +106,11 @@ private:
 //		OFXIMGUIPARAM_VERBOSE << "3 " << ofToString(options) ;
 		comboItems.clear();
 		while (incoming_str.length() > 0) {
-			if ((pos = incoming_str.find(delimiter)) != std::string::npos) {
+			if ((pos = incoming_str.find(OFXIMGUIPARAM_DELIMITER)) != std::string::npos) {
 				token = incoming_str.substr(0, pos);
 				OFXIMGUIPARAM_VERBOSE << "token " << token ;
 				comboItems.push_back(token);
-				incoming_str.erase(0, pos + delimiter.length());
+				incoming_str.erase(0, pos + ((string)OFXIMGUIPARAM_DELIMITER).length());
 				index++;
 			}
 			//get the last element if there is no delimiter at the end
@@ -116,6 +125,7 @@ private:
 		return index;
 	}
 
+	//-----------
 	bool getOfParameter()
 	{
 		bool didChange = false;
@@ -143,6 +153,7 @@ private:
 		return didChange;
 	}
 
+	//-----------
 	bool setOfParameter()
 	{
 		bool didChange = false;
@@ -209,12 +220,14 @@ public:
         
     }
     
+	//-----------
 	void drawSliderFloat()
 	{
 		getOfParameter();
 		
-		ImGui::Text(this->getName().c_str());
+		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
+		ImGui::Text(this->getName().c_str());
 		ImGui::SliderFloat(
 			"##SliderFloat",	//this->getName().c_str(),
 			&this->value,
@@ -231,15 +244,19 @@ public:
 		this->value = MAX(this->value, this->getMin());
 		this->value = MIN(this->value, this->getMax());
 		ImGui::PopItemWidth();
+		ImGui::PopID();
 
 		setOfParameter();
 	}
+
+	//-----------
 	void drawSliderInt()
 	{
 		getOfParameter();
 
-		ImGui::Text(this->getName().c_str());
+		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
+		ImGui::Text(this->getName().c_str());
 		ImGui::SliderInt(
 			"##SliderInt",	//this->getName().c_str(),
 			&this->value,
@@ -252,34 +269,45 @@ public:
 		this->value = MAX(this->value, this->getMin());
 		this->value = MIN(this->value, this->getMax());
 		ImGui::PopItemWidth();
+		ImGui::PopID();
 
 		setOfParameter();
 	}
+
+	//-----------
 	void drawCheckbox()
 	{
 		getOfParameter();
 
-		ImGui::Text(this->getName().c_str());
+		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
+		ImGui::Text(this->getName().c_str());
 		ImGui::Checkbox(
 			"##Checkbox",	//this->getName().c_str(),
 			&this->value);
 		ImGui::PopItemWidth();
-		
+		ImGui::PopID();
+
 		setOfParameter();
 	}
+
+	//-----------
 	void drawTextWrapped()
 	{
 		getOfParameter();
 
-		ImGui::Text(this->getName().c_str());
+		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
+		ImGui::Text(this->getName().c_str());
 		ImGui::TextWrapped(
 			this->get().c_str());
 		ImGui::PopItemWidth();
+		ImGui::PopID();
 
 		setOfParameter();
 	}
+
+	//-----------
 	void drawInputText()
 	{
 
@@ -290,117 +318,89 @@ public:
 		// http://stackoverflow.com/questions/347949/how-to-convert-a-stdstring-to-const-char-or-char
 		// http://stackoverflow.com/questions/5844040/c-setting-a-static-char-array-with-a-string
 
-		
+
 		getOfParameter();
 
-//		static char str0[OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH] = this->value;
-//		static string str = this->value;
+		//		char IDname[100];   // array to hold the result.
+		//		strcpy(IDname, "##InputText"); // copy string one into the result.
+		//		strcat(IDname, this->getName().c_str()); // append string two to the result.
+
+				// convert our string to static char
+		static char str[OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH];
 		int length = strlen(this->value.c_str());
-		ImGui::Text(this->getName().c_str());
+		strncpy(str, this->value.c_str(), length);
 
-		if (
-			/*
-			ImGui::InputTextMultiline(
-			"##InputText",
-				&str[0],
-				OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH
-			))
-		*/
-			ImGui::InputText(
-				"##InputText",
-				&this->value[0],
-				OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH
-			))
-		{
-			int newlength = strlen(&this->value[0]);
-
-			if (length != newlength)
-			{
-				this->set(this->getName(), this->value);
-				cout << "/////////////" << this->value << endl;
-				cout << "size out " << newlength << endl;
-				cout << "size in  " << length << endl;
-
-//				string new_str;
-//				new_str.reserve(newlength);
-//				strncpy(&new_str[0], &this->value[0], newlength);
-//				this->set(this->getName(), this->value);
-//				cout << "/////////////" << this->value << endl;
-//				cout << "/////////////" << new_str << endl;
-			}
-		}
-
-//		delete writable_char;
-
-		/*
-//		const size_t str_len = sizeof(this->get());
-		const size_t str_len = 1000;
-
-		static char str_copy[str_len];
-		strncpy(str_copy, this->get().c_str(), sizeof(this->get()));
-		
+		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
 		ImGui::Text(this->getName().c_str());
-		ImGui::InputText(
-			"##InputText",	//this->getName().c_str(),
-			str_copy,
-			str_len
-		);
+		if (ImGui::InputText(
+			this->getName().c_str(),
+			str,
+			OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH
+		))
+		{
+			int newlength = strlen(str);
+			if (length != newlength)
+			{
+				OFXIMGUIPARAM_VERBOSE << "str  in = " << this->getName();
+				OFXIMGUIPARAM_VERBOSE << "size in  =" << length;
+				OFXIMGUIPARAM_VERBOSE << "str  out = " << str;
+				OFXIMGUIPARAM_VERBOSE << "size out =" << newlength;
+
+				this->set(this->getName(), str);
+			}
+		}
 		ImGui::PopItemWidth();
-
-		if (this->get() != str_copy)
-		{
-			this->set(this->getName(), str_copy);
-			cout << "setOfParameter to " << str_copy ;
-		}
-		*/
-
-		/*
-		// using copy to char. Didn-t work
-		getOfParameter();
-		std::string str = this->get();
-		char * writable = new char[str.size() + 1];
-		std::copy(str.begin(), str.end(), writable);
-		writable[str.size()] = '\0';
-		ImGui::InputText(
-			this->getName().c_str(),
-			writable,
-			IM_ARRAYSIZE(writable));
-		if (this->get() != writable)
-		{
-			this->set(this->getName(), writable);
-			cout << "setOfParameter to " << value ;
-		}
-		delete[] writable;
-		*/
-
-		/*
-		// using std::vector. Didn-t work
-		getOfParameter();
-		std::string str = this->get();
-		vector<char> writable(str.begin(), str.end());
-		writable.push_back('\0');
-		ImGui::InputText(
-			this->getName().c_str(),
-			&writable[0],
-			IM_ARRAYSIZE(&writable[0]));
-		setOfParameter();
-		*/
+		ImGui::PopID();
 	}
 
+	//-----------
+	void drawInputTextMultiline()
+	{
+		getOfParameter();
+
+		// convert our string to static char
+		static char str[OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH];
+		int length = strlen(this->value.c_str());
+		strncpy(str, this->value.c_str(), length);
+
+		ImGui::PushID(this->getName().c_str());
+		ImGui::PushItemWidth(sliderWidth);
+		ImGui::Text(this->getName().c_str());
+		if (ImGui::InputTextMultiline(
+			"##InputText",
+			str,
+			OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH
+		))
+		{
+			int newlength = strlen(str);
+			if (length != newlength)
+			{
+				OFXIMGUIPARAM_VERBOSE << "str  in = " << this->getName();
+				OFXIMGUIPARAM_VERBOSE << "size in  =" << length;
+				OFXIMGUIPARAM_VERBOSE << "str  out = " << str;
+				OFXIMGUIPARAM_VERBOSE << "size out =" << newlength;
+
+				this->set(this->getName(), str);
+			}
+		}
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+	}
+
+	//-----------
 	void drawButton()
 	{
 		getOfParameter();
 
+		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
 		if (ImGui::Button(this->getName().c_str())) {
 			this->set(this->getName(), value);
-			cout << "setOfParameter to " << value ;
+			OFXIMGUIPARAM_VERBOSE << "setOfParameter to " << value;
 		}
-		//ImGui::Checkbox(
-		//	"##bool",	//this->getName().c_str(),
-		//	&this->value);
 		ImGui::PopItemWidth();
+		ImGui::PopID();
 	}
 
 	/*
@@ -446,16 +446,20 @@ public:
 
 
 
+	//-----------
     void startUpdating()
     {
         ofAddListener(ofEvents().update, this, &ofxImGuiParameter::onUpdate);
 
     }
+
+	//-----------
     void onUpdate(ofEventArgs& event)
     {
         update();
     }
     
+	//-----------
 	bool getOfParameter()
 	{
 		bool didChange = false;
@@ -468,6 +472,7 @@ public:
 		return didChange;
 	}
 
+	//-----------
 	bool setOfParameter()
 	{
 		bool didChange = false;
@@ -480,6 +485,7 @@ public:
 		return didChange;
 	}
 
+	//-----------
     bool update()
     {
         bool didChange = false;

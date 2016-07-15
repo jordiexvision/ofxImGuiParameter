@@ -21,6 +21,9 @@ public:
 	//tests
 	ofxImGuiParameter<float>	float_t;
 	ofxImGuiParameter<int>		int_t;
+	ofxImGuiParameter<float>	float_t1;
+	ofxImGuiParameter<int>		int_t1;
+
 	ofxImGuiParameter<bool>		bool_t;
 	ofxImGuiParameter<string>	OSD_string_t;
 	ofxImGuiParameter<string>	Input_string_t;

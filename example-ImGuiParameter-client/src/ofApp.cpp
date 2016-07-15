@@ -23,6 +23,9 @@ void ofApp::setup()
 
 	sharedSettings.float_t.addListener(&camera, &Camera::setFloatValue);
 	sharedSettings.int_t.addListener(&camera, &Camera::setIntValue);
+	sharedSettings.float_t1.addListener(&camera, &Camera::setFloatValue);
+	sharedSettings.int_t1.addListener(&camera, &Camera::setIntValue);
+
 	sharedSettings.bool_t.addListener(&camera, &Camera::setBoolValue);
 //	sharedSettings.Input_string_t.addListener(&camera, &Camera::setStringValue);
 	sharedSettings.button_t.addListener(&camera, &Camera::setButtonValue);
@@ -54,9 +57,13 @@ void ofApp::draw(){
 
 	sharedSettings.float_t.drawSliderFloat();
 	sharedSettings.int_t.drawSliderInt();
+	sharedSettings.float_t1.drawSliderFloat();
+	sharedSettings.int_t1.drawSliderInt();
+
 	sharedSettings.bool_t.drawCheckbox();
 	sharedSettings.OSD_string_t.drawTextWrapped();
-//	sharedSettings.Input_string_t.drawInputText();
+	sharedSettings.Input_string_t.drawInputText();
+//	sharedSettings.Input_string_t.drawInputTextMultiline();
 	sharedSettings.button_t.drawButton();
 
 //	sharedSettings.Input_string_t.drawInputText();
