@@ -5,7 +5,7 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-    ofSetLogLevel(OF_LOG_NOTICE);
+    ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetBackgroundColor(50);	
 	ofSetVerticalSync(true);
 
@@ -61,13 +61,12 @@ void ofApp::draw(){
 	sharedSettings.int_t1.drawSliderInt();
 
 	sharedSettings.bool_t.drawCheckbox();
-	sharedSettings.OSD_string_t.drawTextWrapped();
-	sharedSettings.Input_string_t.drawInputText();
-//	sharedSettings.Input_string_t.drawInputTextMultiline();
 	sharedSettings.button_t.drawButton();
 
-//	sharedSettings.Input_string_t.drawInputText();
-//	sharedSettings.Input_string_t.drawTextWrapped();
+	sharedSettings.OSD_string_t.drawTextWrapped();
+
+	sharedSettings.Input_string_t.drawInputText();
+//	sharedSettings.Input_string_t.drawInputTextMultiline();
 
 	sharedSettings.combo_options_t.drawInputText();
 	sharedSettings.combo_value_t.drawCombo();

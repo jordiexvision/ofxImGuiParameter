@@ -37,20 +37,19 @@ public:
 		options = stringRef.get();
 		value = val;
 
-		//		OFXIMGUIPARAM_VERBOSE << "2 " << ofToString(options) ;
+		//		OFXIMGUIPARAM_VERBOSE << "2 " << ofToString(options) << "]";
 		int maximum = parseOptions(options);
 		setName(name);
 		set(value);
 		setMin(0);
 		setMax(maximum);
 
-		OFXIMGUIPARAM_VERBOSE << "//////getName "		<< this->getName() ;
-		OFXIMGUIPARAM_VERBOSE << "//////getValue "		<< this->get() ;
-		OFXIMGUIPARAM_VERBOSE << "//////getMin "			<< this->getMin() ;
-		OFXIMGUIPARAM_VERBOSE << "//////getMax "			<< this->getMax() ;
-
-		OFXIMGUIPARAM_VERBOSE << "//////getStringRef "	<< this->getStringRef() ;
-		OFXIMGUIPARAM_VERBOSE << "//////options " << options;
+		OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+		OFXIMGUIPARAM_VERBOSE << "getValue [" << this->get() << "]";
+		OFXIMGUIPARAM_VERBOSE << "getMin   [" << this->getMin() << "]";
+		OFXIMGUIPARAM_VERBOSE << "getMax   [" << this->getMax() << "]";
+		OFXIMGUIPARAM_VERBOSE << "getStringRef [" << this->getStringRef() << "]";
+		OFXIMGUIPARAM_VERBOSE << "options  ["		<< options << "]";
 
 		return *this;
 	};
@@ -103,7 +102,7 @@ private:
 		size_t pos = 0;
 		size_t index = -1;
 		std::string token;
-//		OFXIMGUIPARAM_VERBOSE << "3 " << ofToString(options) ;
+//		OFXIMGUIPARAM_VERBOSE << "3 " << ofToString(options) << "]";
 		comboItems.clear();
 		while (incoming_str.length() > 0) {
 			if ((pos = incoming_str.find(OFXIMGUIPARAM_DELIMITER)) != std::string::npos) {
@@ -132,21 +131,21 @@ private:
 		if (this->get() != this->value)
 		{
 			value = this->get();
-			OFXIMGUIPARAM_VERBOSE << "getOfParameter Value to " << value ;
+			OFXIMGUIPARAM_VERBOSE << "get Value [" << value << "]";
 			didChange = true;
 		}
 		if (stringRef.get() != this->options)
 		{
 			options = stringRef;
-			OFXIMGUIPARAM_VERBOSE << "get String to " << options ;
+			OFXIMGUIPARAM_VERBOSE << "get String [" << options << "]";
 			// update
 			setMax(parseOptions(options));
 
-			OFXIMGUIPARAM_VERBOSE << "//////getName " << this->getName() ;
-			OFXIMGUIPARAM_VERBOSE << "//////getValue " << this->get() ;
-			OFXIMGUIPARAM_VERBOSE << "//////getMin " << this->getMin() ;
-			OFXIMGUIPARAM_VERBOSE << "//////getMax " << this->getMax() ;
-			OFXIMGUIPARAM_VERBOSE << "//////getStringRef " << this->getStringRef() ;
+			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+			OFXIMGUIPARAM_VERBOSE << "getValue [" << this->get() << "]";
+			OFXIMGUIPARAM_VERBOSE << "getMin   [" << this->getMin() << "]";
+			OFXIMGUIPARAM_VERBOSE << "getMax   [" << this->getMax() << "]";
+			OFXIMGUIPARAM_VERBOSE << "getStringRef [" << this->getStringRef() << "]";
 
 			didChange = true;
 		}
@@ -160,7 +159,7 @@ private:
 		if (this->get() != this->value)
 		{
 			this->set(this->getName(), value);
-			OFXIMGUIPARAM_VERBOSE << "setOfParameter Value to " << value ;
+			OFXIMGUIPARAM_VERBOSE << "setOfParameter to [" << value << "]";
 			didChange = true;
 		}
 		return didChange;
@@ -175,6 +174,7 @@ class ofxImGuiParameter: public ofParameter<T>
 public:
     
 	T value;
+	char str[OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH];
 
 	// use constructors of parent class
 	// http://stackoverflow.com/questions/347358/inheriting-constructors
@@ -327,7 +327,7 @@ public:
 
 				// convert our string to static char
 		static char str[OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH];
-		int length = strlen(this->value.c_str());
+		int length = strlen(this->get().c_str());
 		strncpy(str, this->value.c_str(), length);
 
 		ImGui::PushID(this->getName().c_str());
@@ -342,10 +342,10 @@ public:
 			int newlength = strlen(str);
 			if (length != newlength)
 			{
-				OFXIMGUIPARAM_VERBOSE << "str  in = " << this->getName();
-				OFXIMGUIPARAM_VERBOSE << "size in  =" << length;
-				OFXIMGUIPARAM_VERBOSE << "str  out = " << str;
-				OFXIMGUIPARAM_VERBOSE << "size out =" << newlength;
+				OFXIMGUIPARAM_VERBOSE << "str  in  [" << this->value << "]";
+				OFXIMGUIPARAM_VERBOSE << "size in  [" << length << "]";
+				OFXIMGUIPARAM_VERBOSE << "str  out [" << str << "]";
+				OFXIMGUIPARAM_VERBOSE << "size out [" << newlength << "]";
 
 				this->set(this->getName(), str);
 			}
@@ -360,7 +360,7 @@ public:
 		getOfParameter();
 
 		// convert our string to static char
-		static char str[OFXIMGUIPARAM_COMBO_ITEM_MAX_LENGTH];
+
 		int length = strlen(this->value.c_str());
 		strncpy(str, this->value.c_str(), length);
 
@@ -376,10 +376,10 @@ public:
 			int newlength = strlen(str);
 			if (length != newlength)
 			{
-				OFXIMGUIPARAM_VERBOSE << "str  in = " << this->getName();
-				OFXIMGUIPARAM_VERBOSE << "size in  =" << length;
-				OFXIMGUIPARAM_VERBOSE << "str  out = " << str;
-				OFXIMGUIPARAM_VERBOSE << "size out =" << newlength;
+				OFXIMGUIPARAM_VERBOSE << "str  in  [" << this->value << "]";
+				OFXIMGUIPARAM_VERBOSE << "size in  [" << length << "]";
+				OFXIMGUIPARAM_VERBOSE << "str  out [" << str << "]";
+				OFXIMGUIPARAM_VERBOSE << "size out [" << newlength << "]";
 
 				this->set(this->getName(), str);
 			}
@@ -397,7 +397,7 @@ public:
 		ImGui::PushItemWidth(sliderWidth);
 		if (ImGui::Button(this->getName().c_str())) {
 			this->set(this->getName(), value);
-			OFXIMGUIPARAM_VERBOSE << "setOfParameter to " << value;
+			OFXIMGUIPARAM_VERBOSE << "setOfParameter to [" << value << "]";
 		}
 		ImGui::PopItemWidth();
 		ImGui::PopID();
@@ -466,7 +466,7 @@ public:
 		if (this->get() != this->value)
 		{
 			value = this->get();
-			OFXIMGUIPARAM_VERBOSE << "getOfParameter to "<< value ;
+			OFXIMGUIPARAM_VERBOSE << "getOfParameter [" << value << "]";
 			didChange = true;
 		}
 		return didChange;
@@ -479,7 +479,7 @@ public:
 		if (this->get() != this->value)
 		{
 			this->set(this->getName(), value);
-			OFXIMGUIPARAM_VERBOSE << "setOfParameter to " << value ;
+			OFXIMGUIPARAM_VERBOSE << "setOfParameter [" << value << "]";
 			didChange = true;
 		}
 		return didChange;
@@ -491,7 +491,7 @@ public:
         bool didChange = false;
 		if (this->get() != this->value)
 		{
-			OFXIMGUIPARAM_VERBOSE << "setOfParameter to " << value ;
+			OFXIMGUIPARAM_VERBOSE << "setOfParameter to [" << value <<"]";
 			this->set(this->getName(), value);
 			didChange = true;
 		}
