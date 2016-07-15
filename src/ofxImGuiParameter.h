@@ -442,6 +442,9 @@ public:
 			OFXIMGUIPARAM_VERBOSE << "size in  [" << length << "]";
 			OFXIMGUIPARAM_VERBOSE << "str  out [" << str << "]";
 			OFXIMGUIPARAM_VERBOSE << "size out [" << oldlength << "]";
+			// clear the char array
+			memset(&str[0], 0, sizeof(str));
+			//copy the string to the char array
 			strncpy(str, this->get().c_str(), length);
 			didChange = true;
 		}

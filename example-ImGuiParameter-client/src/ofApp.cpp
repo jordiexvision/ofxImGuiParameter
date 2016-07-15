@@ -5,7 +5,7 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-    ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetLogLevel(OF_LOG_NOTICE);
 	ofSetBackgroundColor(50);	
 	ofSetVerticalSync(true);
 
