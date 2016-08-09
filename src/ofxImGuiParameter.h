@@ -3,7 +3,7 @@
 #include "ofxImGui.h"
 
 #define OFXIMGUIPARAM_DELIMITER "||"
-#define OFXIMGUIPARAM_STRING_MAX_LENGTH 256
+#define OFXIMGUIPARAM_STRING_MAX_LENGTH 1256
 
 #define OFXIMGUIPARAM_VERBOSE ofLogVerbose(string(__func__))
 #define OFXIMGUIPARAM_NOTICE ofLogNotice(string(__func__))
@@ -84,6 +84,7 @@ public:
 
 private:
 	int	value;
+	bool didChange = false;
 	string options;
 	ofParameter<string>& stringRef;
 	vector<string> comboItems;
@@ -126,7 +127,7 @@ private:
 	//-----------
 	bool getOfParameter()
 	{
-		bool didChange = false;
+		didChange = false;
 		if (this->get() != this->value)
 		{
 			value = this->get();
@@ -154,11 +155,11 @@ private:
 	//-----------
 	bool setOfParameter()
 	{
-		bool didChange = false;
+		didChange = false;
 		if (this->get() != this->value)
 		{
 			this->set(this->getName(), value);
-			OFXIMGUIPARAM_VERBOSE << "setOfParameter to [" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
 			didChange = true;
 		}
 		return didChange;
@@ -167,13 +168,20 @@ private:
 };
 
 
-template<typename T>
-class ofxImGuiParameter: public ofParameter<T>
+template<typename ParameterType>
+class ofxImGuiParameter: public ofParameter<ParameterType>
 {
 public:
     
-	T value;
+	ParameterType value;
 	char str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
+	bool didChange = false;
+	int sliderWidth = 180;
+	int inputIntWidth = 80;
+
+	// forward operator definitions to base class
+	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
+	const ParameterType & operator=(const ParameterType & v);
 
 	// use constructors of parent class
 	// http://stackoverflow.com/questions/347358/inheriting-constructors
@@ -201,14 +209,11 @@ public:
 	};
 	*/
 
-	int sliderWidth = 180;
-	int inputIntWidth = 80;
-
 	string type() const
     {
-        return typeid(ofParameter<T>).name();
+        return typeid(ofParameter<ParameterType>).name();
     }
-    void setFromExisting(ofParameter<T>& existingParameter, bool doUpdate = false )
+    void setFromExisting(ofParameter<ParameterType>& existingParameter, bool doUpdate = false )
     {
         value = existingParameter;
         this->makeReferenceTo(existingParameter);
@@ -280,14 +285,36 @@ public:
 
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
+//		ImGui::Text(this->getName().c_str());
 		ImGui::Checkbox(
-			"##Checkbox",	//this->getName().c_str(),
+			this->getName().c_str(),//"##Checkbox",
 			&this->value);
 		ImGui::PopItemWidth();
 		ImGui::PopID();
 
 		setOfParameter();
+	}
+
+	//-----------
+	bool drawCollapsingHeader(bool returnChangesOnly=false)
+	{
+
+		getOfParameter();
+
+		ImGui::PushID(this->getName().c_str());
+		ImGui::PushItemWidth(sliderWidth);
+		// apply from Client
+		ImGui::SetNextTreeNodeOpen(value);
+		// draw and catch input
+		value = ImGui::CollapsingHeader(this->getName().c_str());
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+
+		setOfParameter();
+
+		if (returnChangesOnly) return didChange;
+
+		return value;
 	}
 
 	//-----------
@@ -300,7 +327,7 @@ public:
 		static float wrap_width = sliderWidth;
 		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + wrap_width);
 
-		ImGui::Text(this->getName().c_str());
+//		ImGui::Text(this->getName().c_str());
 		ImGui::TextWrapped(str);
 
 		// draw custom frame
@@ -366,7 +393,7 @@ public:
 		ImGui::PushItemWidth(sliderWidth);
 		if (ImGui::Button(this->getName().c_str())) {
 			this->set(this->getName(), value);
-			OFXIMGUIPARAM_VERBOSE << "setOfParameter to [" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
 		}
 		ImGui::PopItemWidth();
 		ImGui::PopID();
@@ -432,9 +459,17 @@ public:
 	inline bool getOfString()
 	{
 
-		bool didChange = false;
+		didChange = false;
 		int length		= strlen(this->get().c_str());
 		int oldlength	= strlen(str);
+
+		/*
+		if (length > OFXIMGUIPARAM_STRING_MAX_LENGTH) {
+			OFXIMGUIPARAM_ERROR << "String is too long.";
+			OFXIMGUIPARAM_NOTICE << "Change OFXIMGUIPARAM_STRING_MAX_LENGTH or use shorter string.";
+			return false;
+		}
+		*/
 
 		if (oldlength != length)
 		{
@@ -454,7 +489,7 @@ public:
 	//-----------
 	inline 	bool setOfString()
 	{
-		bool didChange = false;
+		didChange = false;
 		int length = strlen(this->get().c_str());
 		int newlength = strlen(str);
 
@@ -474,11 +509,11 @@ public:
 	//-----------
 	inline bool getOfParameter()
 	{
-		bool didChange = false;
+		didChange = false;
 		if (this->get() != this->value)
 		{
 			value = this->get();
-			OFXIMGUIPARAM_VERBOSE << "getOfParameter [" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
 			didChange = true;
 		}
 		return didChange;
@@ -487,11 +522,11 @@ public:
 	//-----------
 	inline bool setOfParameter()
 	{
-		bool didChange = false;
+		didChange = false;
 		if (this->get() != this->value)
 		{
 			this->set(this->getName(), value);
-			OFXIMGUIPARAM_VERBOSE << "setOfParameter [" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
 			didChange = true;
 		}
 		return didChange;
@@ -500,13 +535,31 @@ public:
 	//-----------
     bool update()
     {
-        bool didChange = false;
+       didChange = false;
 		if (this->get() != this->value)
 		{
-			OFXIMGUIPARAM_VERBOSE << "setOfParameter to [" << value <<"]";
+			OFXIMGUIPARAM_VERBOSE << "[" << value <<"]";
 			this->set(this->getName(), value);
 			didChange = true;
 		}
         return didChange;
     }
+
+
+
 };
+
+
+// similar to ofParameter but returning base class operator:
+template<typename ParameterType>
+inline ofParameter<ParameterType> & ofxImGuiParameter<ParameterType>::operator=(const ofParameter<ParameterType> & v) {
+	set(v);
+//	return *this;
+	return ofParameter<ParameterType>::operator=(v);
+}
+template<typename ParameterType>
+inline const ParameterType & ofxImGuiParameter<ParameterType>::operator=(const ParameterType & v) {
+	set(v);
+//	return obj->value;
+	return ofParameter<ParameterType>::operator=(v);
+}

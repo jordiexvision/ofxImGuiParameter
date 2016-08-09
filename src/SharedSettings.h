@@ -28,6 +28,7 @@ public:
 	ofxImGuiParameter<string>	OSD_string_t;
 	ofxImGuiParameter<string>	Input_string_t;
 	ofxImGuiParameter<bool>		button_t;
+	ofxImGuiParameter<bool>		collapsingHeader_t;
 
 //	ofxImGuiParameter<int>		combo_value_t;
 //	ofxImGuiParameter<string>	combo_options_t;
@@ -39,6 +40,13 @@ public:
 	ofParameterGroup	initParams;
 
 	SharedSettings();
+
+	void draw();
+	void load();
+	void save();
+
+private:
+	ofJson json;
 
 //	bool addListeners(*camera);
 

@@ -17,6 +17,9 @@ public:
     void update();
     void draw();
     
+	void addListeners();
+	void removeListeners();
+
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y);
@@ -38,6 +41,24 @@ public:
 	bool	show_another_window = false;
 
 };
+
+
+/*
+sharedSettings.float_t.drawSliderFloat();
+sharedSettings.int_t.drawSliderInt();
+sharedSettings.float_t1.drawSliderFloat();
+sharedSettings.int_t1.drawSliderInt();
+sharedSettings.bool_t.drawCheckbox();
+sharedSettings.button_t.drawButton();
+sharedSettings.OSD_string_t.drawTextWrapped();
+sharedSettings.Input_string_t.drawInputText();
+//	sharedSettings.Input_string_t.drawInputTextMultiline();
+
+if (sharedSettings.collapsingHeader_t.drawCollapsingHeader()) {
+sharedSettings.combo_options_t.drawInputText();
+sharedSettings.combo_value_t.drawCombo();
+}
+*/
 
 //////////////////////////////
 // Image framerate
