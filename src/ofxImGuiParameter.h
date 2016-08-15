@@ -1,181 +1,13 @@
 #pragma once
 #include "ofMain.h"
 #include "ofxImGui.h"
-
-#define OFXIMGUIPARAM_DELIMITER "||"
-#define OFXIMGUIPARAM_STRING_MAX_LENGTH 1256
-
-#define OFXIMGUIPARAM_VERBOSE ofLogVerbose(string(__func__))
-#define OFXIMGUIPARAM_NOTICE ofLogNotice(string(__func__))
-#define OFXIMGUIPARAM_WARNING ofLogWarning(string(__func__))
-#define OFXIMGUIPARAM_ERROR ofLogError(string(__func__))
-#define OFXIMGUIPARAM_FATAL ofLogFatalError(string(__func__))
-
-class ofxImGuiofParameterCombo : public ofParameter<int>
-{
-
-public:
-	ofxImGuiofParameterCombo(ofxImGuiofParameterCombo& copy) 
-		: stringRef(copy.getStringRef())
-	{
-	};
-	
-	ofxImGuiofParameterCombo(ofParameter<string> & opt) 
-		: stringRef(opt) 
-	{
-	};
-
-
-	ofParameter<int> & setCombo(const int & val) {
-		return setCombo(this->getName(), val, this->getMin(), this->getMax());
-	};
-	ofParameter<int> & setCombo(const string& name, const int & val) {
-		return setCombo(name, val, this->getMin(), this->getMax());
-	};
-	ofParameter<int> & setCombo(const string& name, const int & val, const int & min, const int & max)
-	{
-		options = stringRef.get();
-		value = val;
-
-		//		OFXIMGUIPARAM_VERBOSE << "2 " << ofToString(options) << "]";
-		int maximum = parseOptions(options);
-		setName(name);
-		set(value);
-		setMin(0);
-		setMax(maximum);
-
-		OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-		OFXIMGUIPARAM_VERBOSE << "getValue [" << this->get() << "]";
-		OFXIMGUIPARAM_VERBOSE << "getMin   [" << this->getMin() << "]";
-		OFXIMGUIPARAM_VERBOSE << "getMax   [" << this->getMax() << "]";
-		OFXIMGUIPARAM_VERBOSE << "getStringRef [" << this->getStringRef() << "]";
-		OFXIMGUIPARAM_VERBOSE << "options  ["		<< options << "]";
-
-		return *this;
-	};
-
-	//-----------
-	void drawCombo()
-	{
-		getOfParameter();
-
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
-		// use vectors as const char *
-		// https://github.com/ocornut/imgui/issues/673
-		ImGui::Combo("##Combo", &value,
-			[](void* vec, int idx, const char** out_text) {
-			std::vector<std::string>* vector = reinterpret_cast<std::vector<std::string>*>(vec);
-			if (idx < 0 || idx >= vector->size())return false;
-			*out_text = vector->at(idx).c_str();
-			return true;
-		}, reinterpret_cast<void*>(&comboItems), comboItems.size());
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		setOfParameter();
-	}
-
-	ofParameter<string>& getStringRef() {
-		return stringRef;
-	}
-
-private:
-	int	value;
-	bool didChange = false;
-	string options;
-	ofParameter<string>& stringRef;
-	vector<string> comboItems;
-	int sliderWidth = 180;
-	int inputIntWidth = 80;
-
-
-	//-----------
-	int parseOptions(string incoming_str) {
-		if (incoming_str == "") {
-			OFXIMGUIPARAM_VERBOSE << "string is empty!" ;
-			return 0;
-		}
-
-		size_t pos = 0;
-		size_t index = -1;
-		std::string token;
-//		OFXIMGUIPARAM_VERBOSE << "3 " << ofToString(options) << "]";
-		comboItems.clear();
-		while (incoming_str.length() > 0) {
-			if ((pos = incoming_str.find(OFXIMGUIPARAM_DELIMITER)) != std::string::npos) {
-				token = incoming_str.substr(0, pos);
-				OFXIMGUIPARAM_VERBOSE << "token " << token ;
-				comboItems.push_back(token);
-				incoming_str.erase(0, pos + ((string)OFXIMGUIPARAM_DELIMITER).length());
-				index++;
-			}
-			//get the last element if there is no delimiter at the end
-			else {
-				OFXIMGUIPARAM_VERBOSE << "token " << incoming_str;
-				comboItems.push_back(incoming_str);
-				incoming_str.clear();
-				index++;
-			}
-		}
-		
-		return index;
-	}
-
-	//-----------
-	bool getOfParameter()
-	{
-		didChange = false;
-		if (this->get() != this->value)
-		{
-			value = this->get();
-			OFXIMGUIPARAM_VERBOSE << "get Value [" << value << "]";
-			didChange = true;
-		}
-		if (stringRef.get() != this->options)
-		{
-			options = stringRef;
-			OFXIMGUIPARAM_VERBOSE << "get String [" << options << "]";
-			// update
-			setMax(parseOptions(options));
-
-			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-			OFXIMGUIPARAM_VERBOSE << "getValue [" << this->get() << "]";
-			OFXIMGUIPARAM_VERBOSE << "getMin   [" << this->getMin() << "]";
-			OFXIMGUIPARAM_VERBOSE << "getMax   [" << this->getMax() << "]";
-			OFXIMGUIPARAM_VERBOSE << "getStringRef [" << this->getStringRef() << "]";
-
-			didChange = true;
-		}
-		return didChange;
-	}
-
-	//-----------
-	bool setOfParameter()
-	{
-		didChange = false;
-		if (this->get() != this->value)
-		{
-			this->set(value);
-			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
-			didChange = true;
-		}
-		return didChange;
-	}
-
-};
-
+#include "Utils.h"
 
 template<typename ParameterType>
 class ofxImGuiParameter: public ofParameter<ParameterType>
 {
-public:
-    
+private:
 	ParameterType value;
-//	ParameterType valueOnNextFrame;
 	char str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
 	bool didChange = false;
 	bool needsUpdate = false;
@@ -183,10 +15,7 @@ public:
 	int sliderWidth = 180;
 	int inputIntWidth = 80;
 
-	// forward operator definitions to base class
-	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
-	const ParameterType & operator=(const ParameterType & v);
-
+public:
 	// use constructors of parent class
 	// http://stackoverflow.com/questions/347358/inheriting-constructors
 	// https://en.wikipedia.org/wiki/C%2B%2B11#Object_construction_improvement
@@ -213,26 +42,21 @@ public:
 	};
 	*/
 
-	string type() const
-    {
-        return typeid(ofParameter<ParameterType>).name();
-    }
-    void setFromExisting(ofParameter<ParameterType>& existingParameter, bool doUpdate = false )
-    {
-        value = existingParameter;
-        this->makeReferenceTo(existingParameter);
-        if(doUpdate)
-        {
-            startUpdating();
-        }
-        
-    }
-    
+	string type() const {
+		return typeid(ofParameter<ParameterType>).name();
+	}
+
+	// forward operator definitions to base class
+	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
+	const ParameterType & operator=(const ParameterType & v);
+
 	//-----------
 	void drawSliderFloat()
 	{
+		setOfParameterOnNextFrame();
+
 		getOfParameter();
-		
+
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
 		ImGui::Text(this->getName().c_str());
@@ -255,10 +79,10 @@ public:
 		setOfParameter();
 	}
 
+
 	//-----------
 	void drawSliderInt()
 	{
-
 		setOfParameterOnNextFrame();
 
 		getOfParameter();
@@ -279,17 +103,18 @@ public:
 		ImGui::PopID();
 
 		setOfParameter();
-
 	}
 
 	//-----------
 	void drawCheckbox()
 	{
+		setOfParameterOnNextFrame();
+
 		getOfParameter();
 
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
-//		ImGui::Text(this->getName().c_str());
+		//		ImGui::Text(this->getName().c_str());
 		ImGui::Checkbox(
 			this->getName().c_str(),//"##Checkbox",
 			&this->value);
@@ -300,9 +125,8 @@ public:
 	}
 
 	//-----------
-	bool drawCollapsingHeader(bool returnChangesOnly=false)
+	bool drawCollapsingHeader(bool returnChangesOnly = false)
 	{
-
 		getOfParameter();
 
 		ImGui::PushID(this->getName().c_str());
@@ -332,14 +156,13 @@ public:
 		ImGui::PushItemWidth(sliderWidth);
 		static float wrap_width = sliderWidth;
 		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + wrap_width);
-
 		ImGui::TextWrapped(str);
 
 		// draw custom frame
 		ImGui::GetWindowDrawList()->AddRectFilled(
 			ImGui::GetItemBoxMin(),
 			ImVec2(ImGui::GetItemBoxMax().x + ImGuiStyleVar_FramePadding, ImGui::GetItemBoxMax().y + ImGuiStyleVar_FramePadding),
-			ImColor(0,255,255,25)
+			ImColor(0, 255, 255, 25)
 		);
 
 		ImGui::PopTextWrapPos();
@@ -347,7 +170,7 @@ public:
 		ImGui::PopID();
 
 		// don-t need coz imgui will not change it
-//		setOfString();
+		//		setOfString();
 	}
 
 	//-----------
@@ -362,7 +185,7 @@ public:
 			"##InputText",
 			str,
 			OFXIMGUIPARAM_STRING_MAX_LENGTH
-		)){
+		)) {
 			setOfString();
 		}
 		ImGui::PopItemWidth();
@@ -407,68 +230,105 @@ public:
 		//????setOfParameter();
 	}
 
+
+
 	/*
 	void draw()
 	{
-//		cout << typeid(ofParameter<T>).name();
-		ofAbstractParameter* param = this;
-		ProbeResult probeResult = ParameterTypeUtils::probeType(this);
-		switch (probeResult.type)
-		{
-		case FLOAT_:
-		{
-			cout << "FLOAT_";
-			drawFloat();
-			break;
-		}
-		case INT16_T:
-		case INT32_T:
-		case INT64_T:
-		case INT8_T:
-		{
-			cout << "INT_";
-			drawInt();
-			break;
-		}
-		case BOOL_:
-		{
-			cout << "BOOL_";
-			drawBool();
-			break;
-		}
-		case STRING:
-		{
-			cout << "STRING";
-			drawInputText();
-			break;
-		}
-		}
+	//		cout << typeid(ofParameter<T>).name();
+	ofAbstractParameter* param = this;
+	ProbeResult probeResult = ParameterTypeUtils::probeType(this);
+	switch (probeResult.type)
+	{
+	case FLOAT_:
+	{
+	cout << "FLOAT_";
+	drawFloat();
+	break;
+	}
+	case INT16_T:
+	case INT32_T:
+	case INT64_T:
+	case INT8_T:
+	{
+	cout << "INT_";
+	drawInt();
+	break;
+	}
+	case BOOL_:
+	{
+	cout << "BOOL_";
+	drawBool();
+	break;
+	}
+	case STRING:
+	{
+	cout << "STRING";
+	drawInputText();
+	break;
+	}
+	}
 	}
 	*/
 
 	//-----------
-    void startUpdating()
+	void setOnNextFrame(const ParameterType & v)
 	{
-        ofAddListener(ofEvents().update, this, &ofxImGuiParameter::onUpdate);
-    }
+		OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+		OFXIMGUIPARAM_VERBOSE << "ofParameter [" << this->get() << "]";
+		OFXIMGUIPARAM_VERBOSE << "value [" << value << "]";
+		OFXIMGUIPARAM_VERBOSE << "new value [" << v << "]";
 
+		value = v;
+		//		valueOnNextFrame = v;
+		needsUpdate = true;
+	}
 	//-----------
-    void onUpdate(ofEventArgs& event)
+	void setFromExisting(ofParameter<ParameterType>& existingParameter, bool doUpdate = false)
 	{
-        update();
-    }
-    
+		value = existingParameter;
+		this->makeReferenceTo(existingParameter);
+		if (doUpdate)
+		{
+			startUpdating();
+		}
+	}
+	//-----------
+	void startUpdating()
+	{
+		ofAddListener(ofEvents().update, this, &ofxImGuiParameter::onUpdate);
+	}
+	//-----------
+	void onUpdate(ofEventArgs& event)
+	{
+		update();
+	}
 	//-----------
 	bool hasChanged() {
 		return didChange;
 	}
+	//-----------
+	bool update()
+	{
+		didChange = false;
+		if (this->get() != this->value)
+		{
+			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
 
+			this->set(value);
+			didChange = true;
+		}
+		return didChange;
+	}
+
+private:
 	//-----------
 	inline bool getOfString()
 	{
 		didChange = false;
-		int oldlength   = strlen(str);
-		int newlength	= strlen(this->get().c_str());
+		int oldlength = strlen(str);
+		int newlength = strlen(this->get().c_str());
 
 		if (newlength > OFXIMGUIPARAM_STRING_MAX_LENGTH) {
 			OFXIMGUIPARAM_ERROR << "String is too long.";
@@ -497,8 +357,8 @@ public:
 	inline 	bool setOfString()
 	{
 		didChange = false;
-		int oldlength	= strlen(this->get().c_str());
-		int newlength	= strlen(str);
+		int oldlength = strlen(this->get().c_str());
+		int newlength = strlen(str);
 
 		if (oldlength != newlength)
 		{
@@ -548,7 +408,7 @@ public:
 			OFXIMGUIPARAM_VERBOSE << "new value [" << value << "]";
 
 			this->set(value);
-//			this->setWithoutEventNotifications(value);
+			//			this->setWithoutEventNotifications(value);
 			this->value = MAX(this->value, this->getMin());
 			this->value = MIN(this->value, this->getMax());
 			didChange = true;
@@ -571,8 +431,8 @@ public:
 					OFXIMGUIPARAM_VERBOSE << "new value [" << value << "]";
 
 					this->set(value);
-//					this->set(valueOnNextFrame);
-//					this->setWithoutEventNotifications(valueOnNextFrame);
+					//					this->set(valueOnNextFrame);
+					//					this->setWithoutEventNotifications(valueOnNextFrame);
 					this->value = MAX(this->value, this->getMin());
 					this->value = MIN(this->value, this->getMax());
 					didChange = true;
@@ -585,37 +445,10 @@ public:
 
 		return didChange;
 	}
-
-	//-----------
-    bool update()
-    {
-       didChange = false;
-		if (this->get() != this->value)
-		{
-			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-			OFXIMGUIPARAM_VERBOSE << "[" << value <<"]";
-
-			this->set(value);
-			didChange = true;
-		}
-        return didChange;
-    }
-
-	//-----------
-	void setOnNextFrame(const ParameterType & v)
-	{
-		OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-		OFXIMGUIPARAM_VERBOSE << "ofParameter [" << this->get() << "]";
-		OFXIMGUIPARAM_VERBOSE << "value [" << value << "]";
-		OFXIMGUIPARAM_VERBOSE << "new value [" << v << "]";
-
-		value = v;
-//		valueOnNextFrame = v;
-		needsUpdate = true;
-	}
-
 };
 
+
+//typedef ofxImGuiParameter<float> ofxImGuiParameter_;
 
 // similar to ofParameter but returning base class operator:
 template<typename ParameterType>

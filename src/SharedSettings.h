@@ -1,7 +1,9 @@
 #pragma once
 #include "ofMain.h"
-#include "ofxOscParameterSync.h"
 #include "ofxImGuiParameter.h"
+#include "ofxImGuiParameterCombo.h"
+#include "ofxOscParameterSync.h"
+#include "GuiShellTheme.h"
 
 class SharedSettings {
 
@@ -36,7 +38,7 @@ public:
 //	ofxImGuiParameter<string>	combo_options_t;
 
 	ofxImGuiParameter<string>	combo_options_t;
-	ofxImGuiofParameterCombo	combo_value_t = ofxImGuiofParameterCombo(combo_options_t);
+	ofxImGuiParameterCombo	combo_value_t = ofxImGuiParameterCombo(combo_options_t);
 
 	ofxImGuiParameter<bool>		bCameraInfo;
 	ofxImGuiParameter<string>	cameraInfoString;
@@ -48,12 +50,20 @@ public:
 
 	SharedSettings();
 
+	void setupServer();
+	void setupClient();
+	void update();
 	void draw();
 	void load();
 	void save();
 
 private:
 	ofJson json;
+	ofxImGui gui;
+	ofxOscParameterSync sync;
+
+	bool 	show_test_window = false;
+	bool	show_another_window = false;
 
 //	bool addListeners(*camera);
 

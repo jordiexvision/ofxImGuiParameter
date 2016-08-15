@@ -1,11 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxImGui.h"
-
-#include "ofxOscParameterSync.h"
 #include "SharedSettings.h"
-#include "GuiShellTheme.h"
 #include "Camera.h"
 
 class ofApp : public ofBaseApp{

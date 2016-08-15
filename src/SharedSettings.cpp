@@ -1,6 +1,6 @@
 #include "SharedSettings.h"
 
-SharedSettings::SharedSettings() {
+SharedSettings::SharedSettings(){
 
 	// Asio and Squash Params
 	initParams.setName("init shared settings");
@@ -44,27 +44,76 @@ SharedSettings::SharedSettings() {
 }
 
 //--------------------------------------------------------------
-void SharedSettings::draw()
-{
-	float_t.drawSliderFloat();
-	int_t.drawSliderInt();
-	float_t1.drawSliderFloat();
-	int_t1.drawSliderInt();
-	bool_t.drawCheckbox();
-	button_t.drawButton();
+void SharedSettings::setupServer(){
+	sync.setup((ofParameterGroup&)syncParams,
+		paramSyncServerPort,
+		paramSyncIP,
+		paramSyncClientPort);
 
-	OSD_string_t.drawTextWrapped();
-	OSD_string_t2.drawTextWrapped();
-	OSD_string_t3.drawTextWrapped();
+	gui.setup(new GuiShellTheme());
+	show_test_window = true;
+}
 
-	Input_string_t.drawInputText();
-	//	sharedSettings.Input_string_t.drawInputTextMultiline();
+//--------------------------------------------------------------
+void SharedSettings::setupClient() {
+	sync.setup((ofParameterGroup&)syncParams,
+		paramSyncClientPort,
+		paramSyncIP,
+		paramSyncServerPort);
 
-	if (collapsingHeader_t.drawCollapsingHeader()) {
-		combo_options_t.drawInputText();
-		combo_value_t.drawCombo();
+	gui.setup(new GuiShellTheme());
+	show_test_window = true;
+}
+
+//--------------------------------------------------------------
+void SharedSettings::update(){
+	sync.update();
+}
+//--------------------------------------------------------------
+void SharedSettings::draw(){
+
+	gui.begin();
+	
+	if (ImGui::CollapsingHeader("tests", false)) {
+		float_t.drawSliderFloat();
+		int_t.drawSliderInt();
+		float_t1.drawSliderFloat();
+		int_t1.drawSliderInt();
+		bool_t.drawCheckbox();
+		button_t.drawButton();
+
+		OSD_string_t.drawTextWrapped();
+		OSD_string_t2.drawTextWrapped();
+		OSD_string_t3.drawTextWrapped();
+
+		Input_string_t.drawInputText();
+		//	sharedSettings.Input_string_t.drawInputTextMultiline();
+
+		if (collapsingHeader_t.drawCollapsingHeader()) {
+			combo_options_t.drawInputText();
+			combo_value_t.drawCombo();
+		}
 	}
 
+	if (bCameraInfo.drawCollapsingHeader()) {
+
+		cameraInfoString.drawTextWrapped();
+
+		// this will not update the client
+		//if (sharedSettings.bCameraInfo.hasChanged()) {
+		//	cout << "#################### has changed on draw" << endl;
+		//	sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
+		//}
+	}
+
+	testResend.drawSliderInt();
+
+	// Most of the sample code is in ImGui::ShowTestWindow()
+	if (show_test_window) {
+		ImGui::ShowTestWindow(&show_test_window);
+	}
+	
+	gui.end();
 }
 
 //--------------------------------------------------------------

@@ -9,25 +9,8 @@ void ofApp::setup()
 	ofSetBackgroundColor(50);	
 	ofSetVerticalSync(true);
 
-	gui.setup(new GuiShellTheme());
-	show_test_window = true;
-
-	/*
-	string xmlString = STRINGIFY(
-	<group>
-	<imageFrameRate max="1000" min="1" type="int">0</ imageFrameRate>
-	</group>
-	);
-
-//	controlPanel.setup(xmlString);
-	*/
-
+	sharedSettings.setupClient();
 	addListeners();
-	
-	sync.setup((ofParameterGroup&)sharedSettings.syncParams,
-		sharedSettings.paramSyncClientPort,
-		sharedSettings.paramSyncIP,
-		sharedSettings.paramSyncServerPort);
 		
 }
 
@@ -63,37 +46,12 @@ void ofApp::removeListeners() {
 
 //--------------------------------------------------------------
 void ofApp::update(){
-//	sharedSettings.imageFrameRate ++;
-//	cout << ".";
-	sync.update();
+	sharedSettings.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	gui.begin();
-
-	if (ImGui::CollapsingHeader("tests", false)) {
-		sharedSettings.draw();
-	}
-
-	if (sharedSettings.bCameraInfo.drawCollapsingHeader()) {
-//		if (sharedSettings.bCameraInfo.hasChanged()) {
-//			cout << "#################### has changed" << endl;
-//			sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
-//		}
-		sharedSettings.cameraInfoString.drawTextWrapped();
-	}
-
-	sharedSettings.testResend.drawSliderInt();
-
-	// Most of the sample code is in ImGui::ShowTestWindow()
-	if (show_test_window) {
-		ImGui::ShowTestWindow(&show_test_window);
-	}
-
-	gui.end();
-
-//	ofDrawBitmapStringHighlight(ofToString(sharedSettings.testResend), ofVec2f(100, 100));
+	sharedSettings.draw();
 }
 
 //--------------------------------------------------------------

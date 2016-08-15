@@ -172,7 +172,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\GuiShellTheme.cpp" />
-    <ClCompile Include="..\src\ofxImGuiParameter.cpp" />
     <ClCompile Include="..\src\SharedSettings.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />

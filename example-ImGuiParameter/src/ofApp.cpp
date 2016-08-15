@@ -1,7 +1,5 @@
 ﻿#include "ofApp.h"
 
-#define STRINGIFY(x) #x
-
 //--------------------------------------------------------------
 void ofApp::setup()
 {
@@ -9,27 +7,12 @@ void ofApp::setup()
 	ofSetBackgroundColor(50);
 	ofSetVerticalSync(true);
 	
-	gui.setup(new GuiShellTheme());
-	show_test_window = true;
-
-	string xmlString = STRINGIFY(
-	<group>
-	<imageFrameRate max="1000" min="1" type="int">0</ imageFrameRate>
-	</group>
-	);
-
-	//	controlPanel.setup(xmlString);
-	
+	sharedSettings.setupServer();
 	addListeners();
 
-	sync.setup((ofParameterGroup&)sharedSettings.syncParams,
-		sharedSettings.paramSyncServerPort,
-		sharedSettings.paramSyncIP,
-		sharedSettings.paramSyncClientPort);
-
-	needsUpdate = false;
-
+//	needsUpdate = false;
 }
+
 //--------------------------------------------------------------
 void ofApp::addListeners() {
 	sharedSettings.float_t.addListener(&camera, &Camera::setFloatValue);
@@ -55,6 +38,7 @@ void ofApp::addListeners() {
 //--------------------------------------------------------------
 void ofApp::testResend_f(int & value) {
 	sharedSettings.testResend.setOnNextFrame(value * 10);
+
 	// this will not update the client
 //	value = value * 10;
 }
@@ -91,7 +75,7 @@ void ofApp::removeListeners() {
 //--------------------------------------------------------------
 void ofApp::update(){
 	
-	sync.update();
+	sharedSettings.update();
 
 	// or update it on next frame will work too.
 	//if (needsUpdate) {
@@ -103,31 +87,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	gui.begin();
-
-	if (ImGui::CollapsingHeader("tests",false)) {
-		sharedSettings.draw();
-	}
-	
-	if (sharedSettings.bCameraInfo.drawCollapsingHeader()) {
-
-		sharedSettings.cameraInfoString.drawTextWrapped();
-		
-		// this will not update the client
-		//if (sharedSettings.bCameraInfo.hasChanged()) {
-		//	cout << "#################### has changed on draw" << endl;
-		//	sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
-		//}
-	}
-	
-	sharedSettings.testResend.drawSliderInt();
-
-	// Most of the sample code is in ImGui::ShowTestWindow()
-	if (show_test_window) {
-		ImGui::ShowTestWindow(&show_test_window);
-	}
-
-	gui.end();
+	sharedSettings.draw();
 }
 
 //--------------------------------------------------------------

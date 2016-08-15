@@ -115,9 +115,6 @@
     <ClCompile Include="..\src\SharedSettings.cpp">
       <Filter>addons\ofxImGuiParameter\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ofxImGuiParameter.cpp">
-      <Filter>addons\ofxImGuiParameter\src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
