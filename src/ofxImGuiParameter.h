@@ -175,7 +175,7 @@ class ofxImGuiParameter: public ofParameter<ParameterType>
 public:
     
 	ParameterType value;
-	ParameterType valueOnNextFrame;
+//	ParameterType valueOnNextFrame;
 	char str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
 	bool didChange = false;
 	bool needsUpdate = false;
@@ -568,9 +568,10 @@ public:
 				{
 					OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
 					OFXIMGUIPARAM_VERBOSE << "old value [" << this->get() << "]";
-					OFXIMGUIPARAM_VERBOSE << "new value [" << valueOnNextFrame << "]";
+					OFXIMGUIPARAM_VERBOSE << "new value [" << value << "]";
 
-					this->set(valueOnNextFrame);
+					this->set(value);
+//					this->set(valueOnNextFrame);
 //					this->setWithoutEventNotifications(valueOnNextFrame);
 					this->value = MAX(this->value, this->getMin());
 					this->value = MIN(this->value, this->getMax());
@@ -608,7 +609,8 @@ public:
 		OFXIMGUIPARAM_VERBOSE << "value [" << value << "]";
 		OFXIMGUIPARAM_VERBOSE << "new value [" << v << "]";
 
-		valueOnNextFrame = v;
+		value = v;
+//		valueOnNextFrame = v;
 		needsUpdate = true;
 	}
 
