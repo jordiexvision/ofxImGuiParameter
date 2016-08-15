@@ -26,6 +26,8 @@ public:
 
 	ofxImGuiParameter<bool>		bool_t;
 	ofxImGuiParameter<string>	OSD_string_t;
+	ofxImGuiParameter<string>	OSD_string_t2;
+	ofxImGuiParameter<string>	OSD_string_t3;
 	ofxImGuiParameter<string>	Input_string_t;
 	ofxImGuiParameter<bool>		button_t;
 	ofxImGuiParameter<bool>		collapsingHeader_t;
@@ -34,7 +36,12 @@ public:
 //	ofxImGuiParameter<string>	combo_options_t;
 
 	ofxImGuiParameter<string>	combo_options_t;
-	ofxImGuiofParameterCombo combo_value_t = ofxImGuiofParameterCombo(combo_options_t);
+	ofxImGuiofParameterCombo	combo_value_t = ofxImGuiofParameterCombo(combo_options_t);
+
+	ofxImGuiParameter<bool>		bCameraInfo;
+	ofxImGuiParameter<string>	cameraInfoString;
+
+	ofxImGuiParameter<int>		testResend;
 
 	ofParameterGroup	syncParams;
 	ofParameterGroup	initParams;

@@ -5,7 +5,7 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-	ofSetLogLevel(OF_LOG_NOTICE);
+	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetBackgroundColor(50);	
 	ofSetVerticalSync(true);
 
@@ -71,34 +71,29 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	gui.begin();
-//	controlPanel.drawInt(sharedSettings.imageFrameRate);
-//	controlPanel.drawBool(sharedSettings.imageFrameRate);
 
-	sharedSettings.draw();
-	/*
-	sharedSettings.float_t.drawSliderFloat();
-	sharedSettings.int_t.drawSliderInt();
-	sharedSettings.float_t1.drawSliderFloat();
-	sharedSettings.int_t1.drawSliderInt();
-	sharedSettings.bool_t.drawCheckbox();
-	sharedSettings.button_t.drawButton();
-	sharedSettings.OSD_string_t.drawTextWrapped();
-	sharedSettings.Input_string_t.drawInputText();
-	//	sharedSettings.Input_string_t.drawInputTextMultiline();
-
-	if (sharedSettings.collapsingHeader_t.drawCollapsingHeader()) {
-	sharedSettings.combo_options_t.drawInputText();
-	sharedSettings.combo_value_t.drawCombo();
+	if (ImGui::CollapsingHeader("tests", false)) {
+		sharedSettings.draw();
 	}
-	*/
+
+	if (sharedSettings.bCameraInfo.drawCollapsingHeader()) {
+//		if (sharedSettings.bCameraInfo.hasChanged()) {
+//			cout << "#################### has changed" << endl;
+//			sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
+//		}
+		sharedSettings.cameraInfoString.drawTextWrapped();
+	}
+
+	sharedSettings.testResend.drawSliderInt();
 
 	// Most of the sample code is in ImGui::ShowTestWindow()
 	if (show_test_window) {
 		ImGui::ShowTestWindow(&show_test_window);
 	}
 
-
 	gui.end();
+
+//	ofDrawBitmapStringHighlight(ofToString(sharedSettings.testResend), ofVec2f(100, 100));
 }
 
 //--------------------------------------------------------------
@@ -125,6 +120,16 @@ void ofApp::keyPressed(int key){
 		case 's':
 		{
 			sharedSettings.save();
+			break;
+		}
+		case 't':
+		{
+			sharedSettings.testResend++;
+			break;
+		}
+		case '1':
+		{
+			sharedSettings.testResend=1;
 			break;
 		}
 	}

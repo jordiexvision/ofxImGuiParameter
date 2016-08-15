@@ -5,7 +5,7 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-    ofSetLogLevel(OF_LOG_NOTICE);
+    ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetBackgroundColor(50);
 	ofSetVerticalSync(true);
 	
@@ -27,6 +27,8 @@ void ofApp::setup()
 		sharedSettings.paramSyncIP,
 		sharedSettings.paramSyncClientPort);
 
+	needsUpdate = false;
+
 }
 //--------------------------------------------------------------
 void ofApp::addListeners() {
@@ -41,6 +43,33 @@ void ofApp::addListeners() {
 	// a synchronized combo box
 	sharedSettings.combo_options_t.addListener(&camera, &Camera::setOptionsValue);
 	sharedSettings.combo_value_t.addListener(&camera, &Camera::setComboValue);
+
+	// resend parameter after event
+	//https://forum.openframeworks.cc/t/ofxoscparametersync-resend-after-listener-event-or-force-update-send/24226
+	// listeners must be where settings are.
+	sharedSettings.testResend.addListener(this, &ofApp::testResend_f);
+	sharedSettings.bCameraInfo.addListener(this, &ofApp::updateCameraInfo_str);
+
+}
+
+//--------------------------------------------------------------
+void ofApp::testResend_f(int & value) {
+	sharedSettings.testResend.setOnNextFrame(value * 10);
+	// this will not update the client
+//	value = value * 10;
+}
+
+//--------------------------------------------------------------
+void ofApp::updateCameraInfo_str(bool & value) {
+
+	sharedSettings.cameraInfoString.setOnNextFrame(sharedSettings.cameraInfoString.get() + " a ");
+
+	// or update it on next frame will work too.
+//	needsUpdate = true;
+
+	// this will not update the client
+//	if (sharedSettings.bCameraInfo) sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
+//	cout << "#################### has changed on callback" << endl;
 }
 
 //--------------------------------------------------------------
@@ -56,18 +85,42 @@ void ofApp::removeListeners() {
 	// a synchronized combo box
 	sharedSettings.combo_options_t.removeListener(&camera, &Camera::setOptionsValue);
 	sharedSettings.combo_value_t.removeListener(&camera, &Camera::setComboValue);
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	
 	sync.update();
+
+	// or update it on next frame will work too.
+	//if (needsUpdate) {
+	//	if (sharedSettings.bCameraInfo) sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
+	//	cout << "#################### has changed on update" << endl;
+	//	needsUpdate = false;
+	//}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	gui.begin();
 
-	sharedSettings.draw();
+	if (ImGui::CollapsingHeader("tests",false)) {
+		sharedSettings.draw();
+	}
+	
+	if (sharedSettings.bCameraInfo.drawCollapsingHeader()) {
+
+		sharedSettings.cameraInfoString.drawTextWrapped();
+		
+		// this will not update the client
+		//if (sharedSettings.bCameraInfo.hasChanged()) {
+		//	cout << "#################### has changed on draw" << endl;
+		//	sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
+		//}
+	}
+	
+	sharedSettings.testResend.drawSliderInt();
 
 	// Most of the sample code is in ImGui::ShowTestWindow()
 	if (show_test_window) {
@@ -83,6 +136,7 @@ void ofApp::keyPressed(int key){
     ofLogVerbose(__FUNCTION__) << key;
     switch (key)
     {
+		/*
         case 'r':
         {
 			removeListeners();
@@ -93,6 +147,7 @@ void ofApp::keyPressed(int key){
 			addListeners();
 			break;
 		}
+		*/
 		case 'l':
 		{
 			sharedSettings.load();
@@ -101,6 +156,13 @@ void ofApp::keyPressed(int key){
 		case 's':
 		{
 			sharedSettings.save();
+			break;
+		}
+		default:
+		{
+			sharedSettings.OSD_string_t = sharedSettings.OSD_string_t.get() + (char)key ;
+			sharedSettings.OSD_string_t2 = sharedSettings.OSD_string_t2.get() + (char)key;
+			sharedSettings.OSD_string_t3 = sharedSettings.OSD_string_t3.get() + (char)key;
 			break;
 		}
     }

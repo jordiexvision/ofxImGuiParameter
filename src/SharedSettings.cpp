@@ -25,7 +25,10 @@ SharedSettings::SharedSettings() {
 	syncParams.add(int_t1.set("int test 11111", 1234, 1, 1000));
 
 	syncParams.add(bool_t.set("bool test", true));
-	syncParams.add(OSD_string_t.set("OSD text", "lorem ipsum", "a", "aaaa"));
+	syncParams.add(OSD_string_t.set("OSDtext1", "lorem ipsum1"));
+	syncParams.add(OSD_string_t2.set("OSD text2", "lorem ipsum2"));
+	syncParams.add(OSD_string_t3.set("OSD text3", "lorem ipsum3"));
+
 	syncParams.add(button_t.set("button test", false));
 	syncParams.add(Input_string_t.set("Input text field", "try to edit string"));
 	syncParams.add(collapsingHeader_t.set("Collapsing Header Sample", true));
@@ -33,6 +36,11 @@ SharedSettings::SharedSettings() {
 	string items = "Aaaaaaa||bbbbbbbb||ccccccc||dddddddddd||eeeeeeee||fffffffff||gggggggggggg||hhhhhhhh";
 	syncParams.add(combo_options_t.set("combo options", items));
 	syncParams.add(combo_value_t.setCombo("combo value", 1));
+
+	syncParams.add(bCameraInfo.set("Camera Information", false));
+	syncParams.add(cameraInfoString.set("Camera Information string", "Unknown"));
+
+	syncParams.add(testResend.set("testResend", 1, 1, 1000));
 }
 
 //--------------------------------------------------------------
@@ -44,7 +52,11 @@ void SharedSettings::draw()
 	int_t1.drawSliderInt();
 	bool_t.drawCheckbox();
 	button_t.drawButton();
+
 	OSD_string_t.drawTextWrapped();
+	OSD_string_t2.drawTextWrapped();
+	OSD_string_t3.drawTextWrapped();
+
 	Input_string_t.drawInputText();
 	//	sharedSettings.Input_string_t.drawInputTextMultiline();
 
@@ -52,6 +64,7 @@ void SharedSettings::draw()
 		combo_options_t.drawInputText();
 		combo_value_t.drawCombo();
 	}
+
 }
 
 //--------------------------------------------------------------

@@ -20,6 +20,11 @@ public:
 	void addListeners();
 	void removeListeners();
 
+
+	// special callbacks
+	void testResend_f(int & value);
+	void updateCameraInfo_str(bool & value);
+
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y);
@@ -40,6 +45,7 @@ public:
 	bool 	show_test_window = false;
 	bool	show_another_window = false;
 
+	bool needsUpdate;
 };
 
 
