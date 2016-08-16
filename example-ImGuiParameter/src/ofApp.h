@@ -14,7 +14,7 @@ public:
 	void removeListeners();
 
 	// special callbacks
-	void testResend_f(int & value);
+	void addFive(int & value);
 	void updateCameraInfo_str(bool & value);
 
     void keyPressed(int key);

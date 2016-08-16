@@ -30,22 +30,24 @@ void ofApp::addListeners() {
 	// resend parameter after event
 	//https://forum.openframeworks.cc/t/ofxoscparametersync-resend-after-listener-event-or-force-update-send/24226
 	// listeners must be where settings are.
-	sharedSettings.testResend.addListener(this, &ofApp::testResend_f);
+	sharedSettings.testResend.addListener(this, &ofApp::addFive);
 	sharedSettings.bCameraInfo.addListener(this, &ofApp::updateCameraInfo_str);
 
 }
 
 //--------------------------------------------------------------
-void ofApp::testResend_f(int & value) {
-	sharedSettings.testResend.setOnNextFrame(value * 10);
-
+void ofApp::addFive(int & value){
+	// set on next frame will modify parameter and update the client too.
+	sharedSettings.testResend.setOnNextFrame(value + 5);
 	// this will not update the client
-//	value = value * 10;
+	//	value = value +5;
 }
-
 //--------------------------------------------------------------
 void ofApp::updateCameraInfo_str(bool & value) {
 
+	// ATTENTION the value will be updated and sent only if the gui element is drawn
+	//therfore trying to use is when a collapsing header is closed will not work.
+	// if (!sharedSettings.bCameraInfo) // if using this, it wont work.
 	sharedSettings.cameraInfoString.setOnNextFrame(sharedSettings.cameraInfoString.get() + " a ");
 
 	// or update it on next frame will work too.
@@ -69,7 +71,6 @@ void ofApp::removeListeners() {
 	// a synchronized combo box
 	sharedSettings.combo_options_t.removeListener(&camera, &Camera::setOptionsValue);
 	sharedSettings.combo_value_t.removeListener(&camera, &Camera::setComboValue);
-
 }
 
 //--------------------------------------------------------------
