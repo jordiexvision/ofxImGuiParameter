@@ -1,4 +1,3 @@
-ofxGui
 ofxImGui
 ofxImGuiParameter
 ofxNetwork
