@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "SharedSettings.h"
 #include "Camera.h"
+#include "ofxImGuiParameter.h"
 
 class ofApp : public ofBaseApp{
 public:
@@ -27,10 +28,11 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     void mouseScrolled(float x, float y);
-    
 
 	SharedSettings sharedSettings;
 	Camera camera;
+
+
 
 //	bool needsUpdate;
 };

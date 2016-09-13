@@ -21,8 +21,8 @@ SharedSettings::SharedSettings(){
 	// tests
 	syncParams.add(float_t.set("float test", 0.5f, 0.0f, 1.0f));
 	syncParams.add(int_t.set("int test", 1, 1, 1000));
-	syncParams.add(float_t1.set("float test 11111", 0.2f, 0.0f, 1.0f));
-	syncParams.add(int_t1.set("int test 11111", 1234, 1, 1000));
+	syncParams_b.add(float_t1.set("float test 11111", 0.2f, 0.0f, 1.0f));
+	syncParams_b.add(int_t1.set("syncParams_b", 1234, 1, 1000));
 
 	syncParams.add(bool_t.set("bool test", true));
 	syncParams.add(OSD_string_t.set("OSDtext1", "lorem ipsum1"));
@@ -41,6 +41,28 @@ SharedSettings::SharedSettings(){
 	syncParams.add(cameraInfoString.set("Camera Information string", "Unknown"));
 
 	syncParams.add(testResend.set("testResend", 1, 1, 1000));
+
+	syncParams.add(popUp_1.set("popUp_1", false));
+	syncParams.add(popUp_2.set("popUp_2", false));
+
+	syncParams.add(syncParams_b);
+
+	loadTextFile(ofToDataPath("textFiles/credits.txt", true), credits);
+	loadTextFile(ofToDataPath("textFiles/shortcuts.txt", true), shortcuts);
+
+	//	needsUpdate = false;
+}
+
+//--------------------------------------------------------------
+void SharedSettings::loadTextFile(string loadPath, ofBuffer& buff)
+{
+	ofFile file(ofToDataPath(loadPath));
+
+	if (!file.exists()) {
+		ofLogError("The file " + loadPath + " is missing");
+		buff.set("file not found");
+	}
+	buff.set(file);
 }
 
 //--------------------------------------------------------------
@@ -50,7 +72,7 @@ void SharedSettings::setupServer(){
 		paramSyncIP,
 		paramSyncClientPort);
 
-	gui.setup(new GuiShellTheme());
+	gui.setup(new ImGuiTheme());
 	show_test_window = true;
 }
 
@@ -61,7 +83,7 @@ void SharedSettings::setupClient() {
 		paramSyncIP,
 		paramSyncServerPort);
 
-	gui.setup(new GuiShellTheme());
+	gui.setup(new ImGuiTheme());
 	show_test_window = true;
 }
 
@@ -98,6 +120,9 @@ void SharedSettings::draw(){
 	if (bCameraInfo.drawCollapsingHeader()) {
 
 		cameraInfoString.drawTextWrapped();
+
+		popUp_1.drawPopUp(credits);
+		popUp_2.drawPopUp(shortcuts, 400, 300);
 
 		// this will not update the client
 		//if (sharedSettings.bCameraInfo.hasChanged()) {

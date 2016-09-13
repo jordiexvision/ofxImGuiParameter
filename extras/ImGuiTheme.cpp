@@ -1,12 +1,12 @@
-#include "GuiShellTheme.h"
+#include "ImGuiTheme.h"
 
-GuiShellTheme::GuiShellTheme()
+ImGuiTheme::ImGuiTheme()
 {
 	setup();
 }
 
 
-void GuiShellTheme::setup()
+void ImGuiTheme::setup()
 {
     ImGuiStyle* style = &ImGui::GetStyle();
 
@@ -37,7 +37,7 @@ void GuiShellTheme::setup()
 }
 
 
-void GuiShellTheme::updateColors()
+void ImGuiTheme::updateColors()
 {
     ImGuiStyle* style = &ImGui::GetStyle();
     
@@ -89,13 +89,13 @@ void GuiShellTheme::updateColors()
 
 
 inline
-ofColor GuiShellTheme::convertColor(float* f)
+ofColor ImGuiTheme::convertColor(float* f)
 {
     return ofColor(f[0] *255, f[1] *255, f[2] *255);
 }
 
 
-bool GuiShellTheme::addColorEdit(string label, ofColor& color)
+bool ImGuiTheme::addColorEdit(string label, ofColor& color)
 {
     bool didChange = false;
     float floats[3];
@@ -107,7 +107,7 @@ bool GuiShellTheme::addColorEdit(string label, ofColor& color)
     return didChange;
 }
 
-void GuiShellTheme::themeColorsWindow(bool isOpen)
+void ImGuiTheme::themeColorsWindow(bool isOpen)
 {
     if(isOpen)
     {

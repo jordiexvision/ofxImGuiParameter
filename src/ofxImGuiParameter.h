@@ -1,7 +1,7 @@
 #pragma once
 #include "ofMain.h"
 #include "ofxImGui.h"
-#include "Utils.h"
+#include "ofxImGuiUtils.h"
 
 template<typename ParameterType>
 class ofxImGuiParameter: public ofParameter<ParameterType>
@@ -16,10 +16,15 @@ private:
 	int inputIntWidth = 80;
 
 public:
+
+	// templates can-t be defined in cpp
+	// http://stackoverflow.com/questions/1353973/c-template-linking-error
+
 	// use constructors of parent class
 	// http://stackoverflow.com/questions/347358/inheriting-constructors
 	// https://en.wikipedia.org/wiki/C%2B%2B11#Object_construction_improvement
-//	using ofParameter::ofParameter; //not sure if its ok in all compilers.
+
+	//	using ofParameter::ofParameter; //not sure if its ok in all compilers.
 
 	/*
 	ofxImGuiParameter() {
@@ -230,6 +235,42 @@ public:
 		//????setOfParameter();
 	}
 
+	//-----------
+	void drawPopUp(ofBuffer & text, int width= ofGetWidth() / 2, int height= ofGetHeight() / 2)
+	{
+
+		getOfParameter();
+
+		ImGui::PushID(this->getName().c_str());
+		ImGui::PushItemWidth(sliderWidth);
+//		if (ImGui::Button(this->getName().c_str())) {
+		if (ImGui::Button(this->getName().c_str())) {
+
+			value = !value;
+			this->set(value);
+			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
+		}
+		if (this->get() == true) {
+			ImGui::Begin(this->getName().c_str(), (bool*)this->get(), ImVec2(100, 100), 1.0,
+				ImGuiWindowFlags_Modal |
+				ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoCollapse |
+				ImGuiWindowFlags_NoSavedSettings
+			);
+			ImGui::SetWindowPos(ofVec2f(ofGetWidth() / 2 - (width/2), ofGetHeight() / 2 - (height/2)));
+			ImGui::SetWindowSize(ofVec2f(width, height));
+			ImGui::TextWrapped(text.getData());
+			if (ImGui::Button("Close"))
+				this->set(false);
+			if (!ImGui::IsWindowFocused())
+				this->set(false);
+			ImGui::End();
+		}
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+
+	}
 
 
 	/*

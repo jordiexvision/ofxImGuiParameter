@@ -109,11 +109,11 @@
     <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.cpp">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\GuiShellTheme.cpp">
-      <Filter>addons\ofxImGuiParameter\src</Filter>
+    <ClCompile Include="..\extras\ImGuiTheme.cpp">
+      <Filter>addons\ofxImGuiParameter\extras</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\SharedSettings.cpp">
-      <Filter>addons\ofxImGuiParameter\src</Filter>
+    <ClCompile Include="..\extras\SharedSettings.cpp">
+      <Filter>addons\ofxImGuiParameter\extras</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +179,9 @@
     </Filter>
     <Filter Include="addons\ofxOsc\libs\oscpack\src\osc">
       <UniqueIdentifier>{EDACB89C-9768-9551-4D41-B590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxImGuiParameter\extras">
+      <UniqueIdentifier>{67313b88-2492-4d53-b095-c445564ab339}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -250,9 +253,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxImGui\libs\imgui\src\stb_truetype.h">
       <Filter>addons\ofxImGui\libs\imgui\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxImGuiParameter\src\ofxImGuiParameter.h">
-      <Filter>addons\ofxImGuiParameter\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h">
       <Filter>addons\ofxNetwork\src</Filter>
@@ -332,14 +332,23 @@
     <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\GuiShellTheme.h">
+    <ClInclude Include="..\src\ofxImGuiParameter.h">
       <Filter>addons\ofxImGuiParameter\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\SharedSettings.h">
+    <ClInclude Include="..\src\ofxImGuiParameterCombo.h">
       <Filter>addons\ofxImGuiParameter\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Camera.h">
+    <ClInclude Include="..\src\ofxImGuiUtils.h">
       <Filter>addons\ofxImGuiParameter\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extras\Camera.h">
+      <Filter>addons\ofxImGuiParameter\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extras\ImGuiTheme.h">
+      <Filter>addons\ofxImGuiParameter\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extras\SharedSettings.h">
+      <Filter>addons\ofxImGuiParameter\extras</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

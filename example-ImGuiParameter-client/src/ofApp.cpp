@@ -11,7 +11,7 @@ void ofApp::setup()
 
 	sharedSettings.setupClient();
 	addListeners();
-		
+	
 }
 
 //--------------------------------------------------------------

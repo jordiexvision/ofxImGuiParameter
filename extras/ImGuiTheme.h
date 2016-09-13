@@ -5,12 +5,12 @@
 
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
-class GuiShellTheme : public BaseTheme
+class ImGuiTheme : public BaseTheme
 {
 public:
 
-	GuiShellTheme();
-	virtual ~GuiShellTheme() {
+	ImGuiTheme();
+	virtual ~ImGuiTheme() {
 	};
 
 	virtual void setup();

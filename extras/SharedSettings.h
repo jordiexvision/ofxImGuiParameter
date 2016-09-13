@@ -3,7 +3,7 @@
 #include "ofxImGuiParameter.h"
 #include "ofxImGuiParameterCombo.h"
 #include "ofxOscParameterSync.h"
-#include "GuiShellTheme.h"
+#include "ImGuiTheme.h"
 
 class SharedSettings {
 
@@ -44,9 +44,13 @@ public:
 	ofxImGuiParameter<string>	cameraInfoString;
 
 	ofxImGuiParameter<int>		testResend;
+	ofxImGuiParameter<bool>		popUp_1;
+	ofxImGuiParameter<bool>		popUp_2;
 
+	ofParameterGroup	syncParams_b;
 	ofParameterGroup	syncParams;
 	ofParameterGroup	initParams;
+
 
 	SharedSettings();
 
@@ -56,6 +60,12 @@ public:
 	void draw();
 	void load();
 	void save();
+
+
+	//text files
+	ofBuffer credits;
+	ofBuffer shortcuts;
+	void loadTextFile(string loadPath, ofBuffer& buff);
 
 private:
 	ofJson json;

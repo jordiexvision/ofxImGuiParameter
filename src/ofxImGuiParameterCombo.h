@@ -1,7 +1,7 @@
 #pragma once
 #include "ofMain.h"
 #include "ofxImGui.h"
-#include "Utils.h"
+#include "ofxImGuiUtils.h"
 
 class ofxImGuiParameterCombo : public ofParameter<int>
 {
