@@ -236,20 +236,32 @@ public:
 	}
 
 	//-----------
-	void drawPopUp(ofBuffer & text, int width= ofGetWidth() / 2, int height= ofGetHeight() / 2)
+	void drawPopUpfromMenu(ofBuffer & text, int width= ofGetWidth() / 2, int height= ofGetHeight() / 2)
 	{
 
 		getOfParameter();
 
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
+
 //		if (ImGui::Button(this->getName().c_str())) {
-		if (ImGui::Button(this->getName().c_str())) {
+		if (ImGui::MenuItem(this->getName().c_str(), "", false, !(bool*)this->get())) {
 
 			value = !value;
 			this->set(value);
 			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
 		}
+
+		drawPopUp(text, width, height);
+
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+
+	}
+
+	//-----------
+	void drawPopUp(ofBuffer & text, int width = ofGetWidth() / 2, int height = ofGetHeight() / 2)
+	{
 		if (this->get() == true) {
 			ImGui::Begin(this->getName().c_str(), (bool*)this->get(), ImVec2(100, 100), 1.0,
 				ImGuiWindowFlags_Modal |
@@ -258,7 +270,7 @@ public:
 				ImGuiWindowFlags_NoCollapse |
 				ImGuiWindowFlags_NoSavedSettings
 			);
-			ImGui::SetWindowPos(ofVec2f(ofGetWidth() / 2 - (width/2), ofGetHeight() / 2 - (height/2)));
+			ImGui::SetWindowPos(ofVec2f(ofGetWidth() / 2 - (width / 2), ofGetHeight() / 2 - (height / 2)));
 			ImGui::SetWindowSize(ofVec2f(width, height));
 			ImGui::TextWrapped(text.getData());
 			if (ImGui::Button("Close"))
@@ -267,9 +279,6 @@ public:
 				this->set(false);
 			ImGui::End();
 		}
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
 	}
 
 
