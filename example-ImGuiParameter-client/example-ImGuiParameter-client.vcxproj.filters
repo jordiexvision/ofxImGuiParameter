@@ -338,9 +338,6 @@
     <ClInclude Include="..\src\ofxImGuiParameterCombo.h">
       <Filter>addons\ofxImGuiParameter\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxImGuiUtils.h">
-      <Filter>addons\ofxImGuiParameter\src</Filter>
-    </ClInclude>
     <ClInclude Include="..\extras\Camera.h">
       <Filter>addons\ofxImGuiParameter\extras</Filter>
     </ClInclude>
@@ -349,6 +346,9 @@
     </ClInclude>
     <ClInclude Include="..\extras\SharedSettings.h">
       <Filter>addons\ofxImGuiParameter\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ofxImGuiParameterUtils.h">
+      <Filter>addons\ofxImGuiParameter\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

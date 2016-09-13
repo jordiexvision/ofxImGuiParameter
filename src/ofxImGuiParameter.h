@@ -1,7 +1,7 @@
 #pragma once
 #include "ofMain.h"
 #include "ofxImGui.h"
-#include "ofxImGuiUtils.h"
+#include "ofxImGuiParameterUtils.h"
 
 template<typename ParameterType>
 class ofxImGuiParameter: public ofParameter<ParameterType>
