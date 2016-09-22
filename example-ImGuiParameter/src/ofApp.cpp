@@ -30,13 +30,13 @@ void ofApp::addListeners() {
 	// resend parameter after event
 	//https://forum.openframeworks.cc/t/ofxoscparametersync-resend-after-listener-event-or-force-update-send/24226
 	// listeners must be where settings are.
-	sharedSettings.testResend.addListener(this, &ofApp::addFive);
+	sharedSettings.testResend.addListener(this, &ofApp::addFiveAndResend);
 	sharedSettings.bCameraInfo.addListener(this, &ofApp::updateCameraInfo_str);
 
 }
 
 //--------------------------------------------------------------
-void ofApp::addFive(int & value){
+void ofApp::addFiveAndResend(int & value){
 	// set on next frame will modify parameter and update the client too.
 	sharedSettings.testResend.setOnNextFrame(value + 5);
 	// this will not update the client

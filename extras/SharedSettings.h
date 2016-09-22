@@ -1,26 +1,22 @@
 #pragma once
 #include "ofMain.h"
-#include "ofxImGuiParameter.h"
-#include "ofxImGuiParameterCombo.h"
 #include "ofxOscParameterSync.h"
 #include "ImGuiTheme.h"
+
+#include "ofxImGuiParameter.h"
+#include "ofxImGuiParameterCombo.h"
+#include "ofxImGuiParameterListbox.h"
 
 class SharedSettings {
 
 public:
 
-	// Asio and Squash Params
-	ofParameter<string>		asioIP;
-	ofParameter<int>		asioPort;
-	ofParameter<string>		codecName;
 	// ParameterSync Params	
 	ofParameter<string>		paramSyncIP;
 	ofParameter<int>		paramSyncServerPort;
 	ofParameter<int>		paramSyncClientPort;
 
-	ofxImGuiParameter<int>		imageFrameRate;
-
-	//tests
+	// Basic types
 	ofxImGuiParameter<float>	float_t;
 	ofxImGuiParameter<int>		int_t;
 	ofxImGuiParameter<float>	float_t1;
@@ -34,18 +30,21 @@ public:
 	ofxImGuiParameter<bool>		button_t;
 	ofxImGuiParameter<bool>		collapsingHeader_t;
 
-//	ofxImGuiParameter<int>		combo_value_t;
-//	ofxImGuiParameter<string>	combo_options_t;
-
+	// Combos
 	ofxImGuiParameter<string>	combo_options_t;
-	ofxImGuiParameterCombo	combo_value_t = ofxImGuiParameterCombo(combo_options_t);
+	ofxImGuiParameterCombo		combo_value_t = ofxImGuiParameterCombo(combo_options_t);
 
 	ofxImGuiParameter<bool>		bCameraInfo;
 	ofxImGuiParameter<string>	cameraInfoString;
 
+	// Resend
 	ofxImGuiParameter<int>		testResend;
 	ofxImGuiParameter<bool>		popUp_1;
 	ofxImGuiParameter<bool>		popUp_2;
+
+	//ListBox
+	ofxImGuiParameter<string>	listbox_options_t;
+	ofxImGuiParameterListbox	listbox_value_t = ofxImGuiParameterListbox(listbox_options_t);
 
 	ofParameterGroup	syncParams_b;
 	ofParameterGroup	syncParams;

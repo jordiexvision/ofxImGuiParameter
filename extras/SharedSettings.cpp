@@ -2,11 +2,6 @@
 
 SharedSettings::SharedSettings(){
 
-	// Asio and Squash Params
-	initParams.setName("init shared settings");
-	initParams.add(asioIP.set("asioIP", "127.0.0.1"));
-	initParams.add(asioPort.set("asioPort", 4444));
-	initParams.add(codecName.set("codecName", "copy"));
 	// ParameterSync Params	
 	initParams.add(paramSyncIP.set("paramSyncIP", "localhost"));
 	initParams.add(paramSyncServerPort.set("paramSyncServerPort", 6667));
@@ -15,7 +10,6 @@ SharedSettings::SharedSettings(){
 	//-----------
 	// syncParams
 	syncParams.setName("sync shared settings");
-	syncParams.add(imageFrameRate.set("Image Transfer Rate", 1, 1, 1000));
 
 	//-----------
 	// tests
@@ -37,13 +31,20 @@ SharedSettings::SharedSettings(){
 	syncParams.add(combo_options_t.set("combo options", items));
 	syncParams.add(combo_value_t.setCombo("combo value", 1));
 
-	syncParams.add(bCameraInfo.set("Camera Information", false));
+	syncParams.add(bCameraInfo.set("Synced Header", false));
 	syncParams.add(cameraInfoString.set("Camera Information string", "Unknown"));
 
 	syncParams.add(testResend.set("testResend", 1, 1, 1000));
 
 	syncParams.add(popUp_1.set("popUp_1", false));
 	syncParams.add(popUp_2.set("popUp_2", false));
+
+	// we are forced to use only 4 items. non modifiable!
+	string items2 = "Aaaaaaa||bbbbbbbb||ccccccc||dddddddddd";
+//	items2 = "";
+
+	syncParams.add(listbox_options_t.set("combo options", items2));
+	syncParams.add(listbox_value_t.setCombo("listBox value", ofVec4f(1,0,0,0)));
 
 	syncParams.add(syncParams_b);
 
@@ -96,7 +97,7 @@ void SharedSettings::draw(){
 
 	gui.begin();
 	
-	if (ImGui::CollapsingHeader("tests", false)) {
+	if (ImGui::CollapsingHeader("Basic types", false)) {
 		float_t.drawSliderFloat();
 		int_t.drawSliderInt();
 		float_t1.drawSliderFloat();
@@ -114,6 +115,7 @@ void SharedSettings::draw(){
 		if (collapsingHeader_t.drawCollapsingHeader()) {
 			combo_options_t.drawInputText();
 			combo_value_t.drawCombo();
+			listbox_value_t.drawListbox();
 		}
 	}
 

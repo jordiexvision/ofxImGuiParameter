@@ -350,6 +350,9 @@
     <ClInclude Include="..\src\ofxImGuiParameterUtils.h">
       <Filter>addons\ofxImGuiParameter\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\ofxImGuiParameterListbox.h">
+      <Filter>addons\ofxImGuiParameter\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
