@@ -8,10 +8,11 @@ class ofxImGuiParameter: public ofParameter<ParameterType>
 {
 private:
 	ParameterType value;
-	char str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
 	bool didChange = false;
 	bool needsUpdate = false;
 	bool isNextFrame = false;
+
+	char str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
 	int sliderWidth = 180;
 	int inputIntWidth = 80;
 

@@ -49,8 +49,9 @@ public:
 	//-----------
 	void drawCombo()
 	{
-		getOfParameter();
+		setOfParameterOnNextFrame();
 
+		getOfParameter();
 
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
@@ -74,14 +75,32 @@ public:
 		return stringRef;
 	}
 
+	//-----------
+	void setOnNextFrame(const int & v)
+	{
+		OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+		OFXIMGUIPARAM_VERBOSE << "ofParameter [" << this->get() << "]";
+		OFXIMGUIPARAM_VERBOSE << "value [" << value << "]";
+		OFXIMGUIPARAM_VERBOSE << "new value [" << v << "]";
+
+		value = v;
+		//		valueOnNextFrame = v;
+		needsUpdate = true;
+	}
+
 private:
 	int	value;
 	bool didChange = false;
+	bool needsUpdate = false;
+	bool isNextFrame = false;
+
 	string options;
 	ofParameter<string>& stringRef;
 	vector<string> comboItems;
 	int sliderWidth = 180;
 	int inputIntWidth = 80;
+
+
 
 
 	//-----------
@@ -120,6 +139,8 @@ private:
 	bool getOfParameter()
 	{
 		didChange = false;
+		if (needsUpdate) return didChange;
+
 		if (this->get() != this->value)
 		{
 			value = this->get();
@@ -148,6 +169,8 @@ private:
 	bool setOfParameter()
 	{
 		didChange = false;
+		if (needsUpdate) return didChange;
+
 		if (this->get() != this->value)
 		{
 			this->set(value);
@@ -155,6 +178,36 @@ private:
 			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
 			didChange = true;
 		}
+		return didChange;
+	}
+
+	//-----------
+	inline bool setOfParameterOnNextFrame()
+	{
+		didChange = false;
+
+		// if we need to update the value out of ofListener
+		if (needsUpdate) {
+			if (isNextFrame) {
+				if (this->get() != this->value)
+				{
+					OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+					OFXIMGUIPARAM_VERBOSE << "old value [" << this->get() << "]";
+					OFXIMGUIPARAM_VERBOSE << "new value [" << value << "]";
+
+					this->set(value);
+					//					this->set(valueOnNextFrame);
+					//					this->setWithoutEventNotifications(valueOnNextFrame);
+					this->value = MAX(this->value, this->getMin());
+					this->value = MIN(this->value, this->getMax());
+					didChange = true;
+				}
+				needsUpdate = false;
+				isNextFrame = false;
+			}
+			isNextFrame = true;
+		}
+
 		return didChange;
 	}
 
