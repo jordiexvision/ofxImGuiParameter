@@ -17,6 +17,8 @@ public:
 	// special callbacks
 	void addFiveAndResend(int & value);
 	void updateCameraInfo_str(bool & value);
+	void disableThird(int & value);
+	void checkMaxTwo(ofVec4f & value);
 
     void keyPressed(int key);
     void keyReleased(int key);

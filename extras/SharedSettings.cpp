@@ -27,24 +27,27 @@ SharedSettings::SharedSettings(){
 	syncParams.add(Input_string_t.set("Input text field", "try to edit string"));
 	syncParams.add(collapsingHeader_t.set("Collapsing Header Sample", true));
 
+	// Combos
 	string items = "Aaaaaaa||bbbbbbbb||ccccccc||dddddddddd||eeeeeeee||fffffffff||gggggggggggg||hhhhhhhh";
 	syncParams.add(combo_options_t.set("combo options", items));
 	syncParams.add(combo_value_t.setCombo("combo value", 1));
-
-	syncParams.add(bCameraInfo.set("Synced Header", false));
-	syncParams.add(cameraInfoString.set("Camera Information string", "Unknown"));
-
-	syncParams.add(testResend.set("testResend", 1, 1, 1000));
-
-	syncParams.add(popUp_1.set("popUp_1", false));
-	syncParams.add(popUp_2.set("popUp_2", false));
-
+	//ListBox
 	// we are forced to use only 4 items. non modifiable!
 	string items2 = "Aaaaaaa||bbbbbbbb||ccccccc||dddddddddd";
-//	items2 = "";
-
-	syncParams.add(listbox_options_t.set("combo options", items2));
-	syncParams.add(listbox_value_t.setCombo("listBox value", ofVec4f(1,0,0,0)));
+	syncParams.add(listbox_options_t.set("listBox options", items2));
+	syncParams.add(listbox_value_t.setCombo("listBox value", ofVec4f(1, 0, 0, 0)));
+	// Headers
+	syncParams.add(bResend.set("Check values on Server and resend to Client", false));
+	syncParams.add(collapsingHeaderString.set("Update String on header open", "Unknown"));
+	// PopUps
+	syncParams.add(popUp_1.set("popUp_1", false));
+	syncParams.add(popUp_2.set("popUp_2", false));
+	// Resend
+	syncParams.add(testResend.set("add 5 on server", 1, 1, 1000));
+	syncParams.add(comboResend_options_t.set("combo options", items));
+	syncParams.add(comboResend_value_t.setCombo("combo value", 1));
+	syncParams.add(listboxResend_options_t.set("listBoxResend options", items2));
+	syncParams.add(listboxResend_value_t.setCombo("Force active: min 1, max 2", ofVec4f(1, 0, 0, 0)));
 
 	syncParams.add(syncParams_b);
 
@@ -112,16 +115,14 @@ void SharedSettings::draw(){
 		Input_string_t.drawInputText();
 		//	sharedSettings.Input_string_t.drawInputTextMultiline();
 
-		if (collapsingHeader_t.drawCollapsingHeader()) {
-			combo_options_t.drawInputText();
-			combo_value_t.drawCombo();
-			listbox_value_t.drawListbox();
-		}
+		combo_options_t.drawInputText();
+		combo_value_t.drawCombo();
+		listbox_value_t.drawListbox();
 	}
 
-	if (bCameraInfo.drawCollapsingHeader()) {
+	if (collapsingHeader_t.drawCollapsingHeader()) {
 
-		cameraInfoString.drawTextWrapped();
+		collapsingHeaderString.drawTextWrapped();
 
 		popUp_1.drawPopUp(credits);
 		popUp_2.drawPopUp(shortcuts, 400, 300);
@@ -132,8 +133,11 @@ void SharedSettings::draw(){
 		//	sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
 		//}
 	}
-
-	testResend.drawSliderInt();
+	if (bResend.drawCollapsingHeader()) {
+		testResend.drawSliderInt();
+		comboResend_value_t.drawCombo();
+		listboxResend_value_t.drawListbox();
+	}
 
 	// Most of the sample code is in ImGui::ShowTestWindow()
 	if (show_test_window) {

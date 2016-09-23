@@ -8,7 +8,7 @@ class ofxImGuiParameterCombo : public ofParameter<int>
 
 public:
 	ofxImGuiParameterCombo(ofxImGuiParameterCombo& copy)
-		: stringRef(copy.getStringRef())
+		: stringRef(copy.stringRef)
 	{
 	};
 
@@ -71,27 +71,30 @@ public:
 		setOfParameter();
 	}
 
-	ofParameter<string>& getStringRef() {
+	const ofParameter<string>& getStringRef() {
 		return stringRef;
 	}
-
+	const int& getOldValueRef() {
+		return oldValue;
+	}
 	//-----------
 	void setOnNextFrame(const int & v)
 	{
-		OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-		OFXIMGUIPARAM_VERBOSE << "ofParameter [" << this->get() << "]";
-		OFXIMGUIPARAM_VERBOSE << "value [" << value << "]";
-		OFXIMGUIPARAM_VERBOSE << "new value [" << v << "]";
+		OFXIMGUIPARAM_VERBOSE << "getName      [" << this->getName() << "]";
+		OFXIMGUIPARAM_VERBOSE << "ofParameter  [" << this->get() << "]";
+		OFXIMGUIPARAM_VERBOSE << "value        [" << value << "]";
+		OFXIMGUIPARAM_VERBOSE << "new value	   [" << v << "]";
 
 		value = v;
-		//		valueOnNextFrame = v;
-		needsUpdate = true;
+		needsUpdateOnNextFrame = true;
 	}
 
 private:
 	int	value;
+	int	oldValue;
+
 	bool didChange = false;
-	bool needsUpdate = false;
+	bool needsUpdateOnNextFrame = false;
 	bool isNextFrame = false;
 
 	string options;
@@ -139,7 +142,7 @@ private:
 	bool getOfParameter()
 	{
 		didChange = false;
-		if (needsUpdate) return didChange;
+		if (needsUpdateOnNextFrame) return didChange;
 
 		if (this->get() != this->value)
 		{
@@ -154,7 +157,7 @@ private:
 			// update
 			setMax(parseOptions(options));
 
-			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+			OFXIMGUIPARAM_VERBOSE << "getName   [" << this->getName() << "]";
 			OFXIMGUIPARAM_VERBOSE << "getValue [" << this->get() << "]";
 			OFXIMGUIPARAM_VERBOSE << "getMin   [" << this->getMin() << "]";
 			OFXIMGUIPARAM_VERBOSE << "getMax   [" << this->getMax() << "]";
@@ -166,16 +169,20 @@ private:
 	}
 
 	//-----------
-	bool setOfParameter()
+	inline bool setOfParameter()
 	{
 		didChange = false;
-		if (needsUpdate) return didChange;
+		if (needsUpdateOnNextFrame) return didChange;
+
+		// has to be here
+		oldValue = this->get();
 
 		if (this->get() != this->value)
 		{
 			this->set(value);
-			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "getName   [" << this->getName() << "]";
+			OFXIMGUIPARAM_VERBOSE << "old value [" << oldValue << "]";
+			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
 			didChange = true;
 		}
 		return didChange;
@@ -187,25 +194,28 @@ private:
 		didChange = false;
 
 		// if we need to update the value out of ofListener
-		if (needsUpdate) {
+		if (needsUpdateOnNextFrame) {
 			if (isNextFrame) {
+				OFXIMGUIPARAM_VERBOSE << "applying after frame";
+				needsUpdateOnNextFrame = false;
+				isNextFrame = false;
+
 				if (this->get() != this->value)
 				{
-					OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+					OFXIMGUIPARAM_VERBOSE << "getName   [" << this->getName() << "]";
 					OFXIMGUIPARAM_VERBOSE << "old value [" << this->get() << "]";
 					OFXIMGUIPARAM_VERBOSE << "new value [" << value << "]";
-
 					this->set(value);
-					//					this->set(valueOnNextFrame);
-					//					this->setWithoutEventNotifications(valueOnNextFrame);
-					this->value = MAX(this->value, this->getMin());
-					this->value = MIN(this->value, this->getMax());
 					didChange = true;
 				}
-				needsUpdate = false;
-				isNextFrame = false;
+				// no idea why i can not use it like this
+				// some weird recursion appears between server and client
+				//				setOfParameter();
+
 			}
-			isNextFrame = true;
+			else {
+				isNextFrame = true;
+			}
 		}
 
 		return didChange;

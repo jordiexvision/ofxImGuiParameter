@@ -28,23 +28,31 @@ public:
 	ofxImGuiParameter<string>	OSD_string_t3;
 	ofxImGuiParameter<string>	Input_string_t;
 	ofxImGuiParameter<bool>		button_t;
+
+	// Headers
+	ofxImGuiParameter<string>	collapsingHeaderString;
 	ofxImGuiParameter<bool>		collapsingHeader_t;
+	ofxImGuiParameter<bool>		bResend;
 
 	// Combos
 	ofxImGuiParameter<string>	combo_options_t;
 	ofxImGuiParameterCombo		combo_value_t = ofxImGuiParameterCombo(combo_options_t);
-
-	ofxImGuiParameter<bool>		bCameraInfo;
-	ofxImGuiParameter<string>	cameraInfoString;
-
-	// Resend
-	ofxImGuiParameter<int>		testResend;
-	ofxImGuiParameter<bool>		popUp_1;
-	ofxImGuiParameter<bool>		popUp_2;
-
 	//ListBox
 	ofxImGuiParameter<string>	listbox_options_t;
 	ofxImGuiParameterListbox	listbox_value_t = ofxImGuiParameterListbox(listbox_options_t);
+
+	// PopUps
+	ofxImGuiParameter<bool>		popUp_1;
+	ofxImGuiParameter<bool>		popUp_2;
+
+	// Resend
+	ofxImGuiParameter<int>		testResend;
+	ofxImGuiParameter<string>	comboResend_options_t;
+	ofxImGuiParameterCombo		comboResend_value_t = ofxImGuiParameterCombo(comboResend_options_t);
+	ofxImGuiParameter<string>	listboxResend_options_t;
+	ofxImGuiParameterListbox	listboxResend_value_t = ofxImGuiParameterListbox(listboxResend_options_t);
+
+
 
 	ofParameterGroup	syncParams_b;
 	ofParameterGroup	syncParams;

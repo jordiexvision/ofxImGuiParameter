@@ -31,8 +31,9 @@ void ofApp::addListeners() {
 	//https://forum.openframeworks.cc/t/ofxoscparametersync-resend-after-listener-event-or-force-update-send/24226
 	// listeners must be where settings are.
 	sharedSettings.testResend.addListener(this, &ofApp::addFiveAndResend);
-	sharedSettings.bCameraInfo.addListener(this, &ofApp::updateCameraInfo_str);
-
+	sharedSettings.collapsingHeader_t.addListener(this, &ofApp::updateCameraInfo_str);
+	sharedSettings.comboResend_value_t.addListener(this, &ofApp::disableThird);
+	sharedSettings.listboxResend_value_t.addListener(this, &ofApp::checkMaxTwo);
 }
 
 //--------------------------------------------------------------
@@ -44,11 +45,10 @@ void ofApp::addFiveAndResend(int & value){
 }
 //--------------------------------------------------------------
 void ofApp::updateCameraInfo_str(bool & value) {
-
 	// ATTENTION the value will be updated and sent only if the gui element is drawn
 	//therfore trying to use is when a collapsing header is closed will not work.
 	// if (!sharedSettings.bCameraInfo) // if using this, it wont work.
-	sharedSettings.cameraInfoString.setOnNextFrame(sharedSettings.cameraInfoString.get() + " a ");
+	sharedSettings.collapsingHeaderString.setOnNextFrame(sharedSettings.collapsingHeaderString.get() + " a ");
 
 	// or update it on next frame will work too.
 //	needsUpdate = true;
@@ -56,6 +56,30 @@ void ofApp::updateCameraInfo_str(bool & value) {
 	// this will not update the client
 //	if (sharedSettings.bCameraInfo) sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
 //	cout << "#################### has changed on callback" << endl;
+}
+//--------------------------------------------------------------
+void ofApp::disableThird(int & value){
+
+	if (value == 2) {
+		sharedSettings.comboResend_value_t.setOnNextFrame(sharedSettings.comboResend_value_t.getOldValueRef());
+	}
+}
+//--------------------------------------------------------------
+void ofApp::checkMaxTwo(ofVec4f & value) {
+	int activated = 0;
+
+	activated += value.x;
+	activated += value.y;
+	activated += value.z;
+	activated += value.w;
+
+	cout << "check max" << endl;
+	cout << "new" << sharedSettings.listboxResend_value_t << endl;
+	cout << "old" << sharedSettings.listboxResend_value_t.getOldValueRef() << endl;
+
+	if (activated == 0 || activated > 2) {
+		sharedSettings.listboxResend_value_t.setOnNextFrame(sharedSettings.listboxResend_value_t.getOldValueRef());
+	}
 }
 
 //--------------------------------------------------------------

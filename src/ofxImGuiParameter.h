@@ -8,8 +8,9 @@ class ofxImGuiParameter: public ofParameter<ParameterType>
 {
 private:
 	ParameterType value;
+	ParameterType	oldValue;
 	bool didChange = false;
-	bool needsUpdate = false;
+	bool needsUpdateOnNextFrame = false;
 	bool isNextFrame = false;
 
 	char str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
@@ -51,6 +52,10 @@ public:
 	string type() const {
 		return typeid(ofParameter<ParameterType>).name();
 	}
+	const ParameterType& getOldValueRef() {
+		return oldValue;
+	}
+
 
 	// forward operator definitions to base class
 	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
@@ -227,7 +232,7 @@ public:
 		ImGui::PushItemWidth(sliderWidth);
 		if (ImGui::Button(this->getName().c_str())) {
 			this->set(value);
-			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
 		}
 		ImGui::PopItemWidth();
 		ImGui::PopID();
@@ -250,7 +255,7 @@ public:
 
 			value = !value;
 			this->set(value);
-			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
 		}
 
 		drawPopUp(text, width, height);
@@ -325,14 +330,13 @@ public:
 	//-----------
 	void setOnNextFrame(const ParameterType & v)
 	{
-		OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-		OFXIMGUIPARAM_VERBOSE << "ofParameter [" << this->get() << "]";
-		OFXIMGUIPARAM_VERBOSE << "value [" << value << "]";
-		OFXIMGUIPARAM_VERBOSE << "new value [" << v << "]";
+		OFXIMGUIPARAM_VERBOSE << "getName      [" << this->getName() << "]";
+		OFXIMGUIPARAM_VERBOSE << "ofParameter  [" << this->get() << "]";
+		OFXIMGUIPARAM_VERBOSE << "value        [" << value << "]";
+		OFXIMGUIPARAM_VERBOSE << "new value	   [" << v << "]";
 
 		value = v;
-		//		valueOnNextFrame = v;
-		needsUpdate = true;
+		needsUpdateOnNextFrame = true;
 	}
 	//-----------
 	void setFromExisting(ofParameter<ParameterType>& existingParameter, bool doUpdate = false)
@@ -364,8 +368,8 @@ public:
 		didChange = false;
 		if (this->get() != this->value)
 		{
-			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-			OFXIMGUIPARAM_VERBOSE << "[" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "getName   [" << this->getName() << "]";
+			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
 
 			this->set(value);
 			didChange = true;
@@ -430,11 +434,11 @@ private:
 	inline bool getOfParameter()
 	{
 		didChange = false;
-		if (needsUpdate) return didChange;
+		if (needsUpdateOnNextFrame) return didChange;
 
 		if (this->get() != this->value)
 		{
-			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+			OFXIMGUIPARAM_VERBOSE << "getName   [" << this->getName() << "]";
 			OFXIMGUIPARAM_VERBOSE << "old value [" << value << "]";
 			OFXIMGUIPARAM_VERBOSE << "new value [" << this->get() << "]";
 
@@ -450,18 +454,20 @@ private:
 	inline bool setOfParameter()
 	{
 		didChange = false;
-		if (needsUpdate) return didChange;
+		if (needsUpdateOnNextFrame) return didChange;
+
+		// has to be here
+		oldValue = this->get();
 
 		if (this->get() != this->value)
 		{
-			OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-			OFXIMGUIPARAM_VERBOSE << "old value [" << this->get() << "]";
-			OFXIMGUIPARAM_VERBOSE << "new value [" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "getName   [" << this->getName() << "]";
+			OFXIMGUIPARAM_VERBOSE << "old value [" << oldValue << "]";
+			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
 
 			this->set(value);
-			//			this->setWithoutEventNotifications(value);
-			this->value = MAX(this->value, this->getMin());
-			this->value = MIN(this->value, this->getMax());
+			this->set(MAX(this->value, this->getMin()));
+			this->set(MIN(this->value, this->getMax()));
 			didChange = true;
 		}
 		return didChange;
@@ -473,25 +479,25 @@ private:
 		didChange = false;
 
 		// if we need to update the value out of ofListener
-		if (needsUpdate) {
+		if (needsUpdateOnNextFrame) {
 			if (isNextFrame) {
 				if (this->get() != this->value)
 				{
-					OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
+					OFXIMGUIPARAM_VERBOSE << "getName   [" << this->getName() << "]";
 					OFXIMGUIPARAM_VERBOSE << "old value [" << this->get() << "]";
 					OFXIMGUIPARAM_VERBOSE << "new value [" << value << "]";
 
 					this->set(value);
-					//					this->set(valueOnNextFrame);
-					//					this->setWithoutEventNotifications(valueOnNextFrame);
 					this->value = MAX(this->value, this->getMin());
 					this->value = MIN(this->value, this->getMax());
 					didChange = true;
 				}
-				needsUpdate = false;
+				needsUpdateOnNextFrame = false;
 				isNextFrame = false;
 			}
-			isNextFrame = true;
+			else {
+				isNextFrame = true;
+			}
 		}
 
 		return didChange;
