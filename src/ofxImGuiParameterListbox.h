@@ -18,13 +18,13 @@ public:
 	};
 
 
-	ofParameter<ofVec4f> & setCombo(const ofVec4f & val) {
-		return setCombo(this->getName(), val, this->getMin(), this->getMax());
+	ofParameter<ofVec4f> & setOptions(const ofVec4f & val) {
+		return setOptions(this->getName(), val, this->getMin(), this->getMax());
 	};
-	ofParameter<ofVec4f> & setCombo(const string& name, const ofVec4f & val) {
-		return setCombo(name, val, this->getMin(), this->getMax());
+	ofParameter<ofVec4f> & setOptions(const string& name, const ofVec4f & val) {
+		return setOptions(name, val, this->getMin(), this->getMax());
 	};
-	ofParameter<ofVec4f> & setCombo(const string& name, const ofVec4f & val, const ofVec4f & min, const ofVec4f & max)
+	ofParameter<ofVec4f> & setOptions(const string& name, const ofVec4f & val, const ofVec4f & min, const ofVec4f & max)
 	{
 		options = stringRef.get();
 		value = val;

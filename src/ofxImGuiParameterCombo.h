@@ -18,13 +18,13 @@ public:
 	};
 
 
-	ofParameter<int> & setCombo(const int & val) {
-		return setCombo(this->getName(), val, this->getMin(), this->getMax());
+	ofParameter<int> & setOptions(const int & val) {
+		return setOptions(this->getName(), val, this->getMin(), this->getMax());
 	};
-	ofParameter<int> & setCombo(const string& name, const int & val) {
-		return setCombo(name, val, this->getMin(), this->getMax());
+	ofParameter<int> & setOptions(const string& name, const int & val) {
+		return setOptions(name, val, this->getMin(), this->getMax());
 	};
-	ofParameter<int> & setCombo(const string& name, const int & val, const int & min, const int & max)
+	ofParameter<int> & setOptions(const string& name, const int & val, const int & min, const int & max)
 	{
 		options = stringRef.get();
 		value = val;
