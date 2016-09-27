@@ -36,12 +36,12 @@ public:
 		setMin(0);
 		setMax(maximum);
 
-		OFXIMGUIPARAM_VERBOSE << "getName  [" << this->getName() << "]";
-		OFXIMGUIPARAM_VERBOSE << "getValue [" << this->get() << "]";
-		OFXIMGUIPARAM_VERBOSE << "getMin   [" << this->getMin() << "]";
-		OFXIMGUIPARAM_VERBOSE << "getMax   [" << this->getMax() << "]";
+		OFXIMGUIPARAM_VERBOSE << "getName      [" << this->getName() << "]";
+		OFXIMGUIPARAM_VERBOSE << "getValue     [" << this->get() << "]";
+		OFXIMGUIPARAM_VERBOSE << "getMin       [" << this->getMin() << "]";
+		OFXIMGUIPARAM_VERBOSE << "getMax       [" << this->getMax() << "]";
 		OFXIMGUIPARAM_VERBOSE << "getStringRef [" << this->getStringRef() << "]";
-		OFXIMGUIPARAM_VERBOSE << "options  [" << options << "]";
+		OFXIMGUIPARAM_VERBOSE << "options      [" << options << "]";
 
 		return *this;
 	};
@@ -83,7 +83,7 @@ public:
 		OFXIMGUIPARAM_VERBOSE << "getName      [" << this->getName() << "]";
 		OFXIMGUIPARAM_VERBOSE << "ofParameter  [" << this->get() << "]";
 		OFXIMGUIPARAM_VERBOSE << "value        [" << value << "]";
-		OFXIMGUIPARAM_VERBOSE << "new value	   [" << v << "]";
+		OFXIMGUIPARAM_VERBOSE << "new value    [" << v << "]";
 
 		value = v;
 		needsUpdateOnNextFrame = true;
