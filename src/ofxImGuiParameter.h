@@ -15,7 +15,7 @@ private:
 
 	char str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
 	int sliderWidth = 180;
-	int inputIntWidth = 80;
+	int inputIntWidth = 100;
 
 public:
 
@@ -231,14 +231,20 @@ public:
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
 		if (ImGui::Button(this->getName().c_str())) {
-			this->set(value);
+			this->set(true);
+			value = true;
 			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
 		}
+		else {
+			this->set(false);
+			value = false;
+		}
+
 		ImGui::PopItemWidth();
 		ImGui::PopID();
 
-		// don-t need coz imgui will not change it
-		//????setOfParameter();
+		// don-t need coz imgui will not change it?
+		setOfParameter();
 	}
 
 	//-----------
