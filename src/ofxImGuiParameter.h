@@ -293,6 +293,56 @@ public:
 		}
 	}
 
+	//--------------------------------------------------------------
+	void beginWindow(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
+	{
+		getOfParameter();
+
+		if (value == true) {
+			//set window properties
+			static bool no_titlebar = false;
+			static bool no_border = false;
+			static bool no_resize = false;
+			static bool no_move = false;
+			static bool no_scrollbar = false;
+			static bool no_collapse = false;
+			static bool no_menu = true;
+			static bool no_settings = true;
+			static float bg_alpha = -0.01f; // <0: default
+
+											// Demonstrate the various window flags. 
+											// Typically you would just use the default.
+			ImGuiWindowFlags window_flags = 0;
+			if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
+			if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
+			if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
+			if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
+			if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
+			if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
+			if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
+			if (no_settings) window_flags |= ImGuiWindowFlags_NoSavedSettings;
+
+			ImGui::Begin(this->getName().c_str(), &value, ImVec2(size), bg_alpha, window_flags);
+			setOfParameter();
+
+					// set from imgui to of
+			if (ImGui::IsWindowFocused() &&
+				ImGui::IsWindowHovered() &&
+				ImGui::IsMouseDragging()) {
+				position.set(ImGui::GetWindowPos());
+				size.set(ImGui::GetWindowSize());
+			}
+			else {
+				ImGui::SetWindowPos(position.get());
+				ImGui::SetWindowSize(size.get());
+			}
+		}
+	}
+	//--------------------------------------------------------------
+	void endWindow()
+	{
+			ImGui::End();
+	}
 
 	/*
 	void draw()
