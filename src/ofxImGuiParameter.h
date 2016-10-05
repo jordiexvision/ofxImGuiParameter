@@ -231,12 +231,12 @@ public:
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
 		if (ImGui::Button(this->getName().c_str())) {
-			this->set(true);
+//			this->set(true);
 			value = true;
 			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
 		}
 		else {
-			this->set(false);
+//			this->set(false);
 			value = false;
 		}
 
