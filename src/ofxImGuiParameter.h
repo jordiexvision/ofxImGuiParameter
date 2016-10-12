@@ -7,15 +7,14 @@ template<typename ParameterType>
 class ofxImGuiParameter: public ofParameter<ParameterType>
 {
 private:
-	ParameterType value;
-	ParameterType	oldValue;
-	bool didChange = false;
-	bool needsUpdateOnNextFrame = false;
-	bool isNextFrame = false;
-
-	char str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
-	int sliderWidth = 180;
-	int inputIntWidth = 100;
+	ParameterType	value;//= NULL;
+	ParameterType	oldValue;//= NULL;
+	bool	didChange			= false;
+	bool	needsUpdateOnNextFrame = false;
+	bool	isNextFrame			= false;
+	int		sliderWidth			= 180;
+	int		inputIntWidth		= 100;
+	char	str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
 
 public:
 
@@ -27,27 +26,67 @@ public:
 	// https://en.wikipedia.org/wiki/C%2B%2B11#Object_construction_improvement
 
 	//	using ofParameter::ofParameter; //not sure if its ok in all compilers.
-
 	/*
 	ofxImGuiParameter() {
-		ofParameter();};
-	ofxImGuiParameter(const ofParameter<T> & v) {
-		ofParameter(const ofParameter<T> & v);
-		value = v;
+		ofParameter();
+		cout << "getName   [" << this->getName() << "]" << endl;
+		cout << "old value [" << value << "]" << endl;
+		cout << "new value [" << this->get() << "]" << endl;
+		value = this->get();
 	};
-	ofxImGuiParameter(const T & v) {
+	ofxImGuiParameter(const ofParameter<ParameterType> & v) {
+		ofParameter(const ofParameter<ParameterType> & v);
+		cout << "getName   [" << this->getName() << "]" << endl;
+		cout << "old value [" << value << "]" << endl;
+		cout << "new value [" << this->get() << "]" << endl;
+		value = this->get();
+		oldValue = value = v;
+	};
+	ofxImGuiParameter(const ParameterType & v) {
 		ofParameter(v);
-		value = v;
+		cout << "getName   [" << this->getName() << "]" << endl;
+		cout << "old value [" << value << "]" << endl;
+		cout << "new value [" << this->get() << "]" << endl;
+		value = this->get();
+		oldValue = value = v;
 	};
-	ofxImGuiParameter(const string& name, const T & v) {
+	ofxImGuiParameter(const string& name, const ParameterType & v) {
 		ofParameter(name, v);
-		value = v;
+		cout << "getName   [" << this->getName() << "]" << endl;
+		cout << "old value [" << value << "]" << endl;
+		cout << "new value [" << this->get() << "]" << endl;
+		value = this->get();
+		oldValue = value = v;
 	};
-	ofxImGuiParameter(const string& name, const T & v, const T & min, const T & max) {
+	ofxImGuiParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max) {
 		ofParameter(name, v, min, max);
-		value = v;
+		cout << "getName   [" << this->getName() << "]" << endl;
+		cout << "old value [" << value << "]" << endl;
+		cout << "new value [" << this->get() << "]" << endl;
+		value = this->get();
+		oldValue = value = v;
 	};
 	*/
+
+//	template<typename ParameterType>
+//	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max) {
+////		ofParameter::set(name, v, min, max);
+////		getOfParameter();
+////		this->oldValue = this->value = v;
+//		return *this;
+//	}
+//	template<typename ParameterType>
+//	ofParameter<ParameterType> & set(const string& name, const ParameterType & v) {
+////		ofParameter::set(name, v);
+////		getOfParameter();
+//		return *this;
+//	}
+//	template<typename ParameterType>
+//	inline ofParameter<ParameterType> & set(const ParameterType & v) {
+////		ofParameter::set(v);
+//		//		getOfParameter();
+//		return *this;
+//	}
 
 	string type() const {
 		return typeid(ofParameter<ParameterType>).name();
@@ -233,7 +272,6 @@ public:
 		if (ImGui::Button(this->getName().c_str())) {
 //			this->set(true);
 			value = true;
-			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
 		}
 		else {
 //			this->set(false);
@@ -294,9 +332,11 @@ public:
 	}
 
 	//--------------------------------------------------------------
-	void beginWindow(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
+	bool beginPanel(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
 	{
 		getOfParameter();
+
+		//		ImGui::PushID(this->getName().c_str());;
 
 		if (value == true) {
 			//set window properties
@@ -310,7 +350,6 @@ public:
 			static bool no_settings = true;
 			static float bg_alpha = -0.01f; // <0: default
 
-											// Demonstrate the various window flags. 
 											// Typically you would just use the default.
 			ImGuiWindowFlags window_flags = 0;
 			if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -322,10 +361,11 @@ public:
 			if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
 			if (no_settings) window_flags |= ImGuiWindowFlags_NoSavedSettings;
 
-			ImGui::Begin(this->getName().c_str(), &value, ImVec2(size), bg_alpha, window_flags);
+			bool open;
+			open = ImGui::Begin(this->getName().c_str(), &value, ImVec2(size), bg_alpha, window_flags);
 			setOfParameter();
 
-					// set from imgui to of
+			// set from imgui to of
 			if (ImGui::IsWindowFocused() &&
 				ImGui::IsWindowHovered() &&
 				ImGui::IsMouseDragging()) {
@@ -336,12 +376,161 @@ public:
 				ImGui::SetWindowPos(position.get());
 				ImGui::SetWindowSize(size.get());
 			}
+
+			if (open) {
+				// draw border
+				ofPushStyle();
+				ofNoFill();
+				ofSetColor(ofColor::cyan);
+				ofSetLineWidth(1);
+				ofRect(position->x - .5, position->y - .5, size->x + 1, size->y + 1);
+				ofPopStyle();
+			}
+
+			return open;
+		}
+		else {
+			return false;
+		}
+
+	}
+
+	//--------------------------------------------------------------
+	bool beginWindow(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
+	{
+		getOfParameter();
+
+//		ImGui::PushID(this->getName().c_str());;
+		
+		if (value == true) {
+			//set window properties
+			static bool no_titlebar = false;
+			static bool no_border = false;
+			static bool no_resize = true;
+			static bool no_move = false;
+			static bool no_scrollbar = false;
+			static bool no_collapse = false;
+			static bool no_menu = true;
+			static bool no_settings = true;
+			static float bg_alpha = -0.01f; // <0: default
+
+			// Typically you would just use the default.
+			ImGuiWindowFlags window_flags = 0;
+			if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
+			if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
+			if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
+			if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
+			if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
+			if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
+			if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
+			if (no_settings) window_flags |= ImGuiWindowFlags_NoSavedSettings;
+
+			void  SetNextWindowFocus();
+			bool open;
+			open = ImGui::Begin(this->getName().c_str(), &value, ImVec2(size), bg_alpha, window_flags);
+			setOfParameter();
+
+			// set from imgui to of
+			if (ImGui::IsWindowFocused() &&
+				ImGui::IsWindowHovered() &&
+				ImGui::IsMouseDragging()) {
+				position.set(ImGui::GetWindowPos());
+				size.set(ImGui::GetWindowSize());
+			}
+			else {
+				ImGui::SetWindowPos(position.get());
+				ImGui::SetWindowSize(size.get());
+			}
+
+			return open;
+		}
+		else {
+			return false;
+		}
+
+	}
+
+	//--------------------------------------------------------------
+	// return if window is open
+	bool beginWindow2(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
+	{
+		getOfParameter();
+//		ofTranslate(position.get() + ofVec2f(0, ImGui::GetItemsLineHeightWithSpacing()));
+//		ofTranslate(position.get() + ImGui::GetStyle().FramePadding + ofVec2f(0, ImGui::GetItemsLineHeightWithSpacing()));
+
+//		ImGui::PushID(this->getName().c_str());;
+
+		if (value == true) {
+			//set window properties
+			static bool no_titlebar = true;
+			static bool no_border = false;
+			static bool no_resize = false;
+			static bool no_move = true;
+			static bool no_scrollbar = true;
+			static bool no_collapse = false;
+			static bool no_menu = true;
+			static bool no_settings = true;
+			static float bg_alpha = 0; // <0: default
+
+			// Typically you would just use the default.
+			ImGuiWindowFlags window_flags = 0;
+			if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
+			if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
+			if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
+			if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
+			if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
+			if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
+			if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
+			if (no_settings) window_flags |= ImGuiWindowFlags_NoSavedSettings;
+
+			bool open;
+			open = ImGui::Begin(this->getName().c_str(), &value, ImVec2(size), bg_alpha, window_flags);
+			setOfParameter();
+
+			// set from imgui to of
+			if (ImGui::IsWindowFocused() &&
+				ImGui::IsWindowHovered() &&
+				ImGui::IsMouseDragging()) {
+				position.set(ImGui::GetWindowPos());
+				size.set(ImGui::GetWindowSize());
+			}
+			else {
+				ImGui::SetWindowPos(position.get());
+				ImGui::SetWindowSize(size.get());
+			}
+
+			// draw border
+			ofPushStyle();
+			ofSetColor(10);
+			ofRect(0, 0, size->x, size->y);
+			ofPopStyle();
+
+			return open;
+		}
+		else {
+			return false;
 		}
 	}
+
+	//--------------------------------------------------------------
+	void endPanel()
+	{
+		ImGui::End();
+		//		ImGui::PopID();
+	}
+
 	//--------------------------------------------------------------
 	void endWindow()
 	{
-			ImGui::End();
+		ImGui::End();
+//		ImGui::PopID();
+	}
+
+	//--------------------------------------------------------------
+	void endWindow2()
+	{
+		ImGui::End();
+//		ImGui::PopID();
 	}
 
 	/*
@@ -519,7 +708,7 @@ private:
 		{
 			OFXIMGUIPARAM_VERBOSE << "getName   [" << this->getName() << "]";
 			OFXIMGUIPARAM_VERBOSE << "old value [" << oldValue << "]";
-			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
+			OFXIMGUIPARAM_VERBOSE << "new value [" << value << "]";
 
 			this->set(value);
 			this->set(MAX(this->value, this->getMin()));
