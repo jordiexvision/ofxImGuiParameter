@@ -706,13 +706,16 @@ private:
 
 		if (this->get() != this->value)
 		{
+
+			value = MAX(this->value, this->getMin());
+			value = MIN(this->value, this->getMax());
+
 			OFXIMGUIPARAM_VERBOSE << "getName   [" << this->getName() << "]";
 			OFXIMGUIPARAM_VERBOSE << "old value [" << oldValue << "]";
 			OFXIMGUIPARAM_VERBOSE << "new value [" << value << "]";
 
 			this->set(value);
-			this->set(MAX(this->value, this->getMin()));
-			this->set(MIN(this->value, this->getMax()));
+
 			didChange = true;
 		}
 		return didChange;
