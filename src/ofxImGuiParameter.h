@@ -377,16 +377,6 @@ public:
 				ImGui::SetWindowSize(size.get());
 			}
 
-			if (open) {
-				// draw border
-				ofPushStyle();
-				ofNoFill();
-				ofSetColor(ofColor::cyan);
-				ofSetLineWidth(1);
-				ofRect(position->x - .5, position->y - .5, size->x + 1, size->y + 1);
-				ofPopStyle();
-			}
-
 			return open;
 		}
 		else {
@@ -406,7 +396,7 @@ public:
 			//set window properties
 			static bool no_titlebar = false;
 			static bool no_border = false;
-			static bool no_resize = true;
+			static bool no_resize = false;
 			static bool no_move = false;
 			static bool no_scrollbar = false;
 			static bool no_collapse = false;
