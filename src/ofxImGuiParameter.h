@@ -424,9 +424,18 @@ public:
 			if (ImGui::IsWindowFocused() &&
 				ImGui::IsWindowHovered() &&
 				ImGui::IsMouseDragging()) {
-				position.set(ImGui::GetWindowPos());
+
+				ofVec2f pos = ImGui::GetWindowPos();
+				ofVec2f minpos;
+				minpos.set(
+					MAX(pos.x, 0),
+					MAX(pos.y, 18));
+
+				position.set(minpos);
 				size.set(ImGui::GetWindowSize());
 			}
+
+			// set from of to imgui
 			else {
 				ImGui::SetWindowPos(position.get());
 				ImGui::SetWindowSize(size.get());
@@ -438,68 +447,6 @@ public:
 			return false;
 		}
 
-	}
-
-	//--------------------------------------------------------------
-	// return if window is open
-	bool beginWindow2(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
-	{
-		getOfParameter();
-//		ofTranslate(position.get() + ofVec2f(0, ImGui::GetItemsLineHeightWithSpacing()));
-//		ofTranslate(position.get() + ImGui::GetStyle().FramePadding + ofVec2f(0, ImGui::GetItemsLineHeightWithSpacing()));
-
-//		ImGui::PushID(this->getName().c_str());;
-
-		if (value == true) {
-			//set window properties
-			static bool no_titlebar = true;
-			static bool no_border = false;
-			static bool no_resize = false;
-			static bool no_move = true;
-			static bool no_scrollbar = true;
-			static bool no_collapse = false;
-			static bool no_menu = true;
-			static bool no_settings = true;
-			static float bg_alpha = 0; // <0: default
-
-			// Typically you would just use the default.
-			ImGuiWindowFlags window_flags = 0;
-			if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
-			if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
-			if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
-			if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
-			if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
-			if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
-			if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
-			if (no_settings) window_flags |= ImGuiWindowFlags_NoSavedSettings;
-
-			bool open;
-			open = ImGui::Begin(this->getName().c_str(), &value, ImVec2(size), bg_alpha, window_flags);
-			setOfParameter();
-
-			// set from imgui to of
-			if (ImGui::IsWindowFocused() &&
-				ImGui::IsWindowHovered() &&
-				ImGui::IsMouseDragging()) {
-				position.set(ImGui::GetWindowPos());
-				size.set(ImGui::GetWindowSize());
-			}
-			else {
-				ImGui::SetWindowPos(position.get());
-				ImGui::SetWindowSize(size.get());
-			}
-
-			// draw border
-			ofPushStyle();
-			ofSetColor(10);
-			ofRect(0, 0, size->x, size->y);
-			ofPopStyle();
-
-			return open;
-		}
-		else {
-			return false;
-		}
 	}
 
 	//--------------------------------------------------------------
@@ -511,13 +458,6 @@ public:
 
 	//--------------------------------------------------------------
 	void endWindow()
-	{
-		ImGui::End();
-//		ImGui::PopID();
-	}
-
-	//--------------------------------------------------------------
-	void endWindow2()
 	{
 		ImGui::End();
 //		ImGui::PopID();
