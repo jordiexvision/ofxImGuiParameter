@@ -18,6 +18,14 @@ private:
 
 public:
 
+	const int& getSliderWidth() {
+		return sliderWidth;
+	}
+
+	void setSliderWidth(int value) {
+		sliderWidth = value;
+	}
+
 	// templates can-t be defined in cpp
 	// http://stackoverflow.com/questions/1353973/c-template-linking-error
 
@@ -116,7 +124,10 @@ public:
 			this->getMin(),
 			this->getMax());
 		ImGui::PopItemWidth();
+		ImGui::PopID();
+
 		ImGui::SameLine();
+		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(inputIntWidth);
 		ImGui::InputFloat("##f1",
 			&this->value,
@@ -146,7 +157,10 @@ public:
 			this->getMin(),
 			this->getMax());
 		ImGui::PopItemWidth();
+		ImGui::PopID();
+
 		ImGui::SameLine();
+		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(inputIntWidth);
 		ImGui::InputInt("##i1", &this->value);
 		ImGui::PopItemWidth();
@@ -286,6 +300,28 @@ public:
 	}
 
 	//-----------
+	void drawToggleButton(string stringOnTrue, string stringOnFalse)
+	{
+		getOfParameter();
+
+		ImGui::PushID(this->getName().c_str());
+		ImGui::PushItemWidth(sliderWidth);
+		bool isPressed;
+		if (ImGui::Button((&this->value) ? stringOnTrue.c_str() : stringOnFalse.c_str())) {
+			value = true;
+		}
+		else {
+			value = false;
+		}
+
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+
+		// don-t need coz imgui will not change it?
+		setOfParameter();
+	}
+
+	//-----------
 	void drawPopUpfromMenu(ofBuffer & text, int width= ofGetWidth() / 2, int height= ofGetHeight() / 2)
 	{
 
@@ -341,7 +377,7 @@ public:
 		if (value == true) {
 			//set window properties
 			static bool no_titlebar = false;
-			static bool no_border = false;
+			static bool no_border = true;
 			static bool no_resize = false;
 			static bool no_move = false;
 			static bool no_scrollbar = false;
