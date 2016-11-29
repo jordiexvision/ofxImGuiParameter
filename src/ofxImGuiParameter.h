@@ -307,11 +307,15 @@ public:
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
 		bool isPressed;
-		if (ImGui::Button((&this->value) ? stringOnTrue.c_str() : stringOnFalse.c_str())) {
-			value = true;
+		if (value){
+			if (ImGui::Button(stringOnTrue.c_str())) {
+				value = !value;
+			}
 		}
 		else {
-			value = false;
+			if (ImGui::Button(stringOnFalse.c_str())) {
+				value = !value;
+			}
 		}
 
 		ImGui::PopItemWidth();
