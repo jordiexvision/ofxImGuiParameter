@@ -97,7 +97,7 @@ ofColor ImGuiTheme::convertColor(float* f)
 
 bool ImGuiTheme::addColorEdit(string label, ofColor& color)
 {
-    bool didChange = false;
+    bool didChange;
     float floats[3];
     floats[0] = color.r / 255.f;
     floats[1] = color.g / 255.f;
