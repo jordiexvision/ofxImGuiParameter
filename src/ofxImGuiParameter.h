@@ -362,7 +362,7 @@ public:
 			);
 			ImGui::SetWindowPos(ofVec2f(ofGetWidth() / 2 - (width / 2), ofGetHeight() / 2 - (height / 2)));
 			ImGui::SetWindowSize(ofVec2f(width, height));
-			ImGui::TextWrapped(text.getData());
+			ImGui::TextWrapped(text.getText().c_str());
 			if (ImGui::Button("Close"))
 				this->set(false);
 			if (!ImGui::IsWindowFocused())
