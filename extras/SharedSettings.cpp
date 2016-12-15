@@ -30,12 +30,12 @@ SharedSettings::SharedSettings(){
 	// Combos
 	string items = "Aaaaaaa||bbbbbbbb||ccccccc||dddddddddd||eeeeeeee||fffffffff||gggggggggggg||hhhhhhhh";
 	syncParams.add(combo_options_t.set("combo options", items));
-	syncParams.add(combo_value_t.setCombo("combo value", 1));
+	syncParams.add(combo_value_t.setOptions("combo value", 1));
 	//ListBox
 	// we are forced to use only 4 items. non modifiable!
 	string items2 = "Aaaaaaa||bbbbbbbb||ccccccc||dddddddddd";
 	syncParams.add(listbox_options_t.set("listBox options", items2));
-	syncParams.add(listbox_value_t.setCombo("listBox value", ofVec4f(1, 0, 0, 0)));
+	syncParams.add(listbox_value_t.setOptions("listBox value", ofVec4f(1, 0, 0, 0)));
 	// Headers
 	syncParams.add(bResend.set("Check values on Server and resend to Client", false));
 	syncParams.add(collapsingHeaderString.set("Update String on header open", "Unknown"));
@@ -45,9 +45,9 @@ SharedSettings::SharedSettings(){
 	// Resend
 	syncParams.add(testResend.set("add 5 on server", 1, 1, 1000));
 	syncParams.add(comboResend_options_t.set("combo options", items));
-	syncParams.add(comboResend_value_t.setCombo("combo value", 1));
+	syncParams.add(comboResend_value_t.setOptions("combo value", 1));
 	syncParams.add(listboxResend_options_t.set("listBoxResend options", items2));
-	syncParams.add(listboxResend_value_t.setCombo("Force active: min 1, max 2", ofVec4f(1, 0, 0, 0)));
+	syncParams.add(listboxResend_value_t.setOptions("Force active: min 1, max 2", ofVec4f(1, 0, 0, 0)));
 
 	syncParams.add(syncParams_b);
 
