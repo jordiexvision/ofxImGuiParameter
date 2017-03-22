@@ -616,7 +616,7 @@ private:
 			// clear the char array
 			memset(&str[0], 0, sizeof(str));
 			//copy the string to the char array
-			strncpy(str, this->get().c_str(), newlength);
+			strncpy_s(str, this->get().c_str(), newlength);
 			didChange = true;
 		}
 		return didChange;
