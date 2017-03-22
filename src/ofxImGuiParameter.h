@@ -1,5 +1,4 @@
 #pragma once
-#include "ofMain.h"
 #include "ofxImGui.h"
 #include "ofxImGuiParameterUtils.h"
 
@@ -548,7 +547,7 @@ public:
 		OFXIMGUIPARAM_VERBOSE << "getName      [" << this->getName() << "]";
 		OFXIMGUIPARAM_VERBOSE << "ofParameter  [" << this->get() << "]";
 		OFXIMGUIPARAM_VERBOSE << "value        [" << value << "]";
-		OFXIMGUIPARAM_VERBOSE << "new value	   [" << v << "]";
+		OFXIMGUIPARAM_VERBOSE << "new value    [" << v << "]";
 
 		value = v;
 		needsUpdateOnNextFrame = true;

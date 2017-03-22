@@ -3,6 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
+	ofLogToConsole();
     ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetBackgroundColor(50);
 	ofSetVerticalSync(true);

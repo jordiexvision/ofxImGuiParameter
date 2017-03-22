@@ -1,5 +1,4 @@
 #pragma once
-#include "ofMain.h"
 
 #define OFXIMGUIPARAM_DELIMITER "||"
 #define OFXIMGUIPARAM_STRING_MAX_LENGTH 1256
