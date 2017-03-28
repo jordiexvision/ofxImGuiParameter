@@ -426,7 +426,7 @@ public:
 	}
 
 	//--------------------------------------------------------------
-	bool beginWindow(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
+	bool beginWindow(string& windowName, ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
 	{
 		getOfParameter();
 
@@ -457,7 +457,7 @@ public:
 
 			void  SetNextWindowFocus();
 			bool open;
-			open = ImGui::Begin(this->getName().c_str(), &value, ImVec2(size), bg_alpha, window_flags);
+			open = ImGui::Begin(windowName.c_str(), &value, ImVec2(size), bg_alpha, window_flags);
 			setOfParameter();
 
 			// set from imgui to of
