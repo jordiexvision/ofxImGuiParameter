@@ -3,10 +3,12 @@
 #include "ofxImGui.h"
 #include "ofxImGuiParameterUtils.h"
 
+#define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
+
 template<typename ParameterType>
 class ofxImGuiParameter: public ofParameter<ParameterType>
 {
-private:
+protected:
 	ParameterType	value;//= NULL;
 	ParameterType	oldValue;//= NULL;
 	bool	didChange			= false;
@@ -15,9 +17,9 @@ private:
 	int		sliderWidth			= 180;
 	int		inputIntWidth		= 100;
 	char	str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
+	virtual bool draw() { return true; };
 
 public:
-
 	const int& getSliderWidth() {
 		return sliderWidth;
 	}
@@ -26,76 +28,6 @@ public:
 		sliderWidth = value;
 	}
 
-	// templates can-t be defined in cpp
-	// http://stackoverflow.com/questions/1353973/c-template-linking-error
-
-	// use constructors of parent class
-	// http://stackoverflow.com/questions/347358/inheriting-constructors
-	// https://en.wikipedia.org/wiki/C%2B%2B11#Object_construction_improvement
-
-	//	using ofParameter::ofParameter; //not sure if its ok in all compilers.
-	/*
-	ofxImGuiParameter() {
-		ofParameter();
-		cout << "getName   [" << this->getName() << "]" << endl;
-		cout << "old value [" << value << "]" << endl;
-		cout << "new value [" << this->get() << "]" << endl;
-		value = this->get();
-	};
-	ofxImGuiParameter(const ofParameter<ParameterType> & v) {
-		ofParameter(const ofParameter<ParameterType> & v);
-		cout << "getName   [" << this->getName() << "]" << endl;
-		cout << "old value [" << value << "]" << endl;
-		cout << "new value [" << this->get() << "]" << endl;
-		value = this->get();
-		oldValue = value = v;
-	};
-	ofxImGuiParameter(const ParameterType & v) {
-		ofParameter(v);
-		cout << "getName   [" << this->getName() << "]" << endl;
-		cout << "old value [" << value << "]" << endl;
-		cout << "new value [" << this->get() << "]" << endl;
-		value = this->get();
-		oldValue = value = v;
-	};
-	ofxImGuiParameter(const string& name, const ParameterType & v) {
-		ofParameter(name, v);
-		cout << "getName   [" << this->getName() << "]" << endl;
-		cout << "old value [" << value << "]" << endl;
-		cout << "new value [" << this->get() << "]" << endl;
-		value = this->get();
-		oldValue = value = v;
-	};
-	ofxImGuiParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max) {
-		ofParameter(name, v, min, max);
-		cout << "getName   [" << this->getName() << "]" << endl;
-		cout << "old value [" << value << "]" << endl;
-		cout << "new value [" << this->get() << "]" << endl;
-		value = this->get();
-		oldValue = value = v;
-	};
-	*/
-
-//	template<typename ParameterType>
-//	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max) {
-////		ofParameter::set(name, v, min, max);
-////		getOfParameter();
-////		this->oldValue = this->value = v;
-//		return *this;
-//	}
-//	template<typename ParameterType>
-//	ofParameter<ParameterType> & set(const string& name, const ParameterType & v) {
-////		ofParameter::set(name, v);
-////		getOfParameter();
-//		return *this;
-//	}
-//	template<typename ParameterType>
-//	inline ofParameter<ParameterType> & set(const ParameterType & v) {
-////		ofParameter::set(v);
-//		//		getOfParameter();
-//		return *this;
-//	}
-
 	string type() const {
 		return typeid(ofParameter<ParameterType>).name();
 	}
@@ -103,444 +35,9 @@ public:
 		return oldValue;
 	}
 
-
 	// forward operator definitions to base class
 	ofParameter<ParameterType> & operator=(const ofParameter<ParameterType> & v);
 	const ParameterType & operator=(const ParameterType & v);
-
-	//-----------
-	void drawSliderFloat()
-	{
-		setOfParameterOnNextFrame();
-
-		getOfParameter();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
-		ImGui::SliderFloat(
-			"##SliderFloat",	//this->getName().c_str(),
-			&this->value,
-			this->getMin(),
-			this->getMax());
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		ImGui::SameLine();
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(inputIntWidth);
-		ImGui::InputFloat("##f1",
-			&this->value,
-			this->getMin(),
-			this->getMax()
-		);
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		setOfParameter();
-	}
-
-
-	//-----------
-	void drawSliderInt()
-	{
-		setOfParameterOnNextFrame();
-
-		getOfParameter();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
-		ImGui::SliderInt(
-			"##SliderInt",	//this->getName().c_str(),
-			&this->value,
-			this->getMin(),
-			this->getMax());
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		ImGui::SameLine();
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(inputIntWidth);
-		ImGui::InputInt("##i1", &this->value);
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		setOfParameter();
-	}
-
-	//-----------
-	void drawCheckbox()
-	{
-		setOfParameterOnNextFrame();
-
-		getOfParameter();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		//		ImGui::Text(this->getName().c_str());
-		ImGui::Checkbox(
-			this->getName().c_str(),//"##Checkbox",
-			&this->value);
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		setOfParameter();
-	}
-
-	//-----------
-	bool drawCollapsingHeader(bool returnChangesOnly = false)
-	{
-		getOfParameter();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		// apply from Client
-		ImGui::SetNextTreeNodeOpen(value);
-		// draw and catch input
-		value = ImGui::CollapsingHeader(this->getName().c_str());
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		setOfParameter();
-
-		if (returnChangesOnly) return didChange;
-
-		return value;
-	}
-
-	//-----------
-	void drawTextWrapped()
-	{
-		setOfParameterOnNextFrame();
-
-		getOfString();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		static float wrap_width = sliderWidth;
-		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + wrap_width);
-		ImGui::TextWrapped(str);
-
-		// draw custom frame
-		ImGui::GetWindowDrawList()->AddRectFilled(
-			ImGui::GetItemBoxMin(),
-			ImVec2(ImGui::GetItemBoxMax().x + ImGuiStyleVar_FramePadding, ImGui::GetItemBoxMax().y + ImGuiStyleVar_FramePadding),
-			ImColor(0, 255, 255, 25)
-		);
-
-		ImGui::PopTextWrapPos();
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		// don-t need coz imgui will not change it
-		//		setOfString();
-	}
-
-	//-----------
-	void drawInputText()
-	{
-		getOfString();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
-		if (ImGui::InputText(
-			"##InputText",
-			str,
-			OFXIMGUIPARAM_STRING_MAX_LENGTH
-		)) {
-			setOfString();
-		}
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-	}
-
-	//-----------
-	void drawInputTextMultiline()
-	{
-		getOfString();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
-		if (ImGui::InputTextMultiline(
-			"##InputText",
-			str,
-			OFXIMGUIPARAM_STRING_MAX_LENGTH
-		))
-		{
-			setOfString();
-		}
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-	}
-
-	//-----------
-	void drawButton()
-	{
-		getOfParameter();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		if (ImGui::Button(this->getName().c_str())) {
-//			this->set(true);
-			value = true;
-		}
-		else {
-//			this->set(false);
-			value = false;
-		}
-
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		// don-t need coz imgui will not change it?
-		setOfParameter();
-	}
-
-	//-----------
-	void drawToggleButton(string stringOnTrue, string stringOnFalse)
-	{
-		getOfParameter();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		bool isPressed;
-		if (value){
-			if (ImGui::Button(stringOnTrue.c_str())) {
-				value = !value;
-			}
-		}
-		else {
-			if (ImGui::Button(stringOnFalse.c_str())) {
-				value = !value;
-			}
-		}
-
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-		// don-t need coz imgui will not change it?
-		setOfParameter();
-	}
-
-	//-----------
-	void drawPopUpfromMenu(ofBuffer & text, int width= ofGetWidth() / 2, int height= ofGetHeight() / 2)
-	{
-
-		getOfParameter();
-
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-
-//		if (ImGui::Button(this->getName().c_str())) {
-		if (ImGui::MenuItem(this->getName().c_str(), "", false, !(bool*)this->get())) {
-
-			value = !value;
-			this->set(value);
-			OFXIMGUIPARAM_VERBOSE << "result    [" << value << "]";
-		}
-
-		drawPopUp(text, width, height);
-
-		ImGui::PopItemWidth();
-		ImGui::PopID();
-
-	}
-
-	//-----------
-	void drawPopUp(ofBuffer & text, int width = ofGetWidth() / 2, int height = ofGetHeight() / 2)
-	{
-		if (this->get() == true) {
-			ImGui::Begin(this->getName().c_str(), (bool*)this->get(), ImVec2(100, 100), 1.0,
-				ImGuiWindowFlags_Modal |
-				ImGuiWindowFlags_NoTitleBar |
-				ImGuiWindowFlags_NoMove |
-				ImGuiWindowFlags_NoCollapse |
-				ImGuiWindowFlags_NoSavedSettings
-			);
-			ImGui::SetWindowPos(ofVec2f(ofGetWidth() / 2 - (width / 2), ofGetHeight() / 2 - (height / 2)));
-			ImGui::SetWindowSize(ofVec2f(width, height));
-			ImGui::TextWrapped(text.getText().c_str());
-			if (ImGui::Button("Close"))
-				this->set(false);
-			if (!ImGui::IsWindowFocused())
-				this->set(false);
-			ImGui::End();
-		}
-	}
-
-	//--------------------------------------------------------------
-	bool beginPanel(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
-	{
-		getOfParameter();
-
-		//		ImGui::PushID(this->getName().c_str());;
-
-		if (value == true) {
-			//set window properties
-			static bool no_titlebar = false;
-			static bool no_border = true;
-			static bool no_resize = false;
-			static bool no_move = false;
-			static bool no_scrollbar = false;
-			static bool no_collapse = false;
-			static bool no_menu = true;
-			static bool no_settings = true;
-			static float bg_alpha = -0.01f; // <0: default
-
-											// Typically you would just use the default.
-			ImGuiWindowFlags window_flags = 0;
-			if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
-			if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
-			if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
-			if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
-			if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
-			if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
-			if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
-			if (no_settings) window_flags |= ImGuiWindowFlags_NoSavedSettings;
-
-			bool open;
-			open = ImGui::Begin(this->getName().c_str(), &value, ImVec2(size), bg_alpha, window_flags);
-			setOfParameter();
-
-			// set from imgui to of
-			if (ImGui::IsWindowFocused() &&
-				ImGui::IsWindowHovered() &&
-				ImGui::IsMouseDragging()) {
-				position.set(ImGui::GetWindowPos());
-				size.set(ImGui::GetWindowSize());
-			}
-			else {
-				ImGui::SetWindowPos(position.get());
-				ImGui::SetWindowSize(size.get());
-			}
-
-			return open;
-		}
-		else {
-			return false;
-		}
-
-	}
-
-	//--------------------------------------------------------------
-	bool beginWindow(string& windowName, ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
-	{
-		getOfParameter();
-
-//		ImGui::PushID(this->getName().c_str());;
-		
-		if (value == true) {
-			//set window properties
-			static bool no_titlebar = false;
-			static bool no_border = false;
-			static bool no_resize = false;
-			static bool no_move = false;
-			static bool no_scrollbar = false;
-			static bool no_collapse = false;
-			static bool no_menu = true;
-			static bool no_settings = true;
-			static float bg_alpha = -0.01f; // <0: default
-
-			// Typically you would just use the default.
-			ImGuiWindowFlags window_flags = 0;
-			if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
-			if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
-			if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
-			if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
-			if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
-			if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
-			if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
-			if (no_settings) window_flags |= ImGuiWindowFlags_NoSavedSettings;
-
-			void  SetNextWindowFocus();
-			bool open;
-			open = ImGui::Begin(windowName.c_str(), &value, ImVec2(size), bg_alpha, window_flags);
-			setOfParameter();
-
-			// set from imgui to of
-			if (ImGui::IsWindowFocused() &&
-				ImGui::IsWindowHovered() &&
-				ImGui::IsMouseDragging()) {
-
-				ofVec2f pos = ImGui::GetWindowPos();
-				ofVec2f minpos;
-				minpos.set(
-					MAX(pos.x, 0),
-					MAX(pos.y, 18));
-
-				position.set(minpos);
-				size.set(ImGui::GetWindowSize());
-			}
-
-			// set from of to imgui
-			else {
-				ImGui::SetWindowPos(position.get());
-				ImGui::SetWindowSize(size.get());
-			}
-
-			return open;
-		}
-		else {
-			return false;
-		}
-
-	}
-
-	//--------------------------------------------------------------
-	void endPanel()
-	{
-		ImGui::End();
-		//		ImGui::PopID();
-	}
-
-	//--------------------------------------------------------------
-	void endWindow()
-	{
-		ImGui::End();
-//		ImGui::PopID();
-	}
-
-	/*
-	void draw()
-	{
-	//		cout << typeid(ofParameter<T>).name();
-	ofAbstractParameter* param = this;
-	ProbeResult probeResult = ParameterTypeUtils::probeType(this);
-	switch (probeResult.type)
-	{
-	case FLOAT_:
-	{
-	cout << "FLOAT_";
-	drawFloat();
-	break;
-	}
-	case INT16_T:
-	case INT32_T:
-	case INT64_T:
-	case INT8_T:
-	{
-	cout << "INT_";
-	drawInt();
-	break;
-	}
-	case BOOL_:
-	{
-	cout << "BOOL_";
-	drawBool();
-	break;
-	}
-	case STRING:
-	{
-	cout << "STRING";
-	drawInputText();
-	break;
-	}
-	}
-	}
-	*/
 
 	//-----------
 	void setOnNextFrame(const ParameterType & v)
@@ -592,7 +89,7 @@ public:
 		return didChange;
 	}
 
-private:
+protected:
 	//-----------
 	inline bool getOfString()
 	{
@@ -736,3 +233,80 @@ inline const ParameterType & ofxImGuiParameter<ParameterType>::operator=(const P
 	set(v);
 	return ofParameter<ParameterType>::operator=(v);
 }
+
+
+
+
+
+
+
+
+// templates can-t be defined in cpp
+// http://stackoverflow.com/questions/1353973/c-template-linking-error
+
+// use constructors of parent class
+// http://stackoverflow.com/questions/347358/inheriting-constructors
+// https://en.wikipedia.org/wiki/C%2B%2B11#Object_construction_improvement
+
+//	using ofParameter::ofParameter; //not sure if its ok in all compilers.
+/*
+ofxImGuiParameter() {
+ofParameter();
+cout << "getName   [" << this->getName() << "]" << endl;
+cout << "old value [" << value << "]" << endl;
+cout << "new value [" << this->get() << "]" << endl;
+value = this->get();
+};
+ofxImGuiParameter(const ofParameter<ParameterType> & v) {
+ofParameter(const ofParameter<ParameterType> & v);
+cout << "getName   [" << this->getName() << "]" << endl;
+cout << "old value [" << value << "]" << endl;
+cout << "new value [" << this->get() << "]" << endl;
+value = this->get();
+oldValue = value = v;
+};
+ofxImGuiParameter(const ParameterType & v) {
+ofParameter(v);
+cout << "getName   [" << this->getName() << "]" << endl;
+cout << "old value [" << value << "]" << endl;
+cout << "new value [" << this->get() << "]" << endl;
+value = this->get();
+oldValue = value = v;
+};
+ofxImGuiParameter(const string& name, const ParameterType & v) {
+ofParameter(name, v);
+cout << "getName   [" << this->getName() << "]" << endl;
+cout << "old value [" << value << "]" << endl;
+cout << "new value [" << this->get() << "]" << endl;
+value = this->get();
+oldValue = value = v;
+};
+ofxImGuiParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max) {
+ofParameter(name, v, min, max);
+cout << "getName   [" << this->getName() << "]" << endl;
+cout << "old value [" << value << "]" << endl;
+cout << "new value [" << this->get() << "]" << endl;
+value = this->get();
+oldValue = value = v;
+};
+*/
+
+//	template<typename ParameterType>
+//	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max) {
+////		ofParameter::set(name, v, min, max);
+////		getOfParameter();
+////		this->oldValue = this->value = v;
+//		return *this;
+//	}
+//	template<typename ParameterType>
+//	ofParameter<ParameterType> & set(const string& name, const ParameterType & v) {
+////		ofParameter::set(name, v);
+////		getOfParameter();
+//		return *this;
+//	}
+//	template<typename ParameterType>
+//	inline ofParameter<ParameterType> & set(const ParameterType & v) {
+////		ofParameter::set(v);
+//		//		getOfParameter();
+//		return *this;
+//	}
