@@ -8,7 +8,7 @@
 class SliderFloat : public ofxImGuiParameter<float>{
 public:
 	using  ofxImGuiParameter<float>::operator=;
-	bool draw() override { drawSliderFloat(); return true; }
+	bool drawWidget() override { drawSliderFloat(); return true; }
 
 	//-----------
 	void drawSliderFloat()
@@ -47,7 +47,7 @@ public:
 class SliderInt : public ofxImGuiParameter<int> {
 public:
 	using  ofxImGuiParameter<int>::operator=;
-	bool draw() override { drawSliderInt(); return true; }
+	bool drawWidget() override { drawSliderInt(); return true; }
 
 	//-----------
 	void drawSliderInt()
@@ -82,14 +82,14 @@ public:
 class IntPlot : public ofxImGuiParameter<float> {
 public:
 	using  ofxImGuiParameter<float>::operator=;
-	bool draw() override { drawPlot(); return true; }
+	bool drawWidget() override { drawPlot(); return true; }
 
 	static const int size = 100;
 	float queue[size];
 	int offset = 0;
 
 	//-----------
-	void drawPlot()
+	void drawPlot(int width = 10)
 	{
 //		setOfParameterOnNextFrame();
 
@@ -105,7 +105,7 @@ public:
 			if (offset == size) offset = 0;
 //			ImGui::PushID("IntPlot");
 
-			ImGui::PushItemWidth(sliderWidth);
+			ImGui::PushItemWidth(width);
 			ImGui::PlotHistogram(
 				"##IntPlot", 
 				queue,
@@ -130,7 +130,7 @@ public:
 class CheckBox : public ofxImGuiParameter<bool> {
 public:
 	using  ofxImGuiParameter<bool>::operator=;
-	bool draw() override { drawCheckbox(); return true; }
+	bool drawWidget() override { drawCheckbox(); return true; }
 
 	//-----------
 	void drawCheckbox()
@@ -156,7 +156,7 @@ public:
 class CollapsingHeader : public ofxImGuiParameter<bool> {
 public:
 	using  ofxImGuiParameter<bool>::operator=;
-	bool draw() override { return drawCollapsingHeader(); }
+	bool drawWidget() override { return drawCollapsingHeader(); }
 
 	//-----------
 	bool drawCollapsingHeader(bool returnChangesOnly = false)
@@ -184,7 +184,7 @@ public:
 class TextWrapped : public ofxImGuiParameter<string> {
 public:
 	using  ofxImGuiParameter<string>::operator=;
-	bool draw() override { drawTextWrapped(); return true; }
+	bool drawWidget() override { drawTextWrapped(); return true; }
 	//-----------
 	void drawTextWrapped()
 	{
@@ -218,7 +218,7 @@ public:
 class InputText : public ofxImGuiParameter<string> {
 public:
 	using  ofxImGuiParameter<string>::operator=;
-	bool draw() override { drawInputText(); return true; }
+	bool drawWidget() override { drawInputText(); return true; }
 	//-----------
 	void drawInputText()
 	{
@@ -243,7 +243,7 @@ public:
 class InputTextMultiline : public ofxImGuiParameter<string> {
 public:
 	using  ofxImGuiParameter<string>::operator=;
-	bool draw() override { drawInputTextMultiline(); return true; }
+	bool drawWidget() override { drawInputTextMultiline(); return true; }
 
 	//-----------
 	void drawInputTextMultiline()
@@ -270,7 +270,7 @@ public:
 class Button : public ofxImGuiParameter<bool> {
 public:
 	using  ofxImGuiParameter<bool>::operator=;
-	bool draw() override { drawButton(); return true; }
+	bool drawWidget() override { drawButton(); return true; }
 
 	//-----------
 	void drawButton()
@@ -300,7 +300,7 @@ public:
 class Toggle : public ofxImGuiParameter<bool> {
 public:
 	using  ofxImGuiParameter<bool>::operator=;
-	bool draw() override { return true; }
+	bool drawWidget() override { return true; }
 
 	//-----------
 	void drawToggleButton(string stringOnTrue, string stringOnFalse)
@@ -333,7 +333,7 @@ public:
 class Popup : public ofxImGuiParameter<int> {
 public:
 	using  ofxImGuiParameter<int>::operator=;
-	bool draw() override { return true; }
+	bool drawWidget() override { return true; }
 
 	//-----------
 	void drawPopUp(ofBuffer & text, int width = ofGetWidth() / 2, int height = ofGetHeight() / 2)
@@ -386,7 +386,7 @@ public:
 class Panel : public ofxImGuiParameter<bool> {
 public:
 	using  ofxImGuiParameter<bool>::operator=;
-	bool draw() override { return true; }
+	bool drawWidget() override { return true; }
 
 	//-----------
 	bool beginPanel(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
@@ -447,47 +447,84 @@ public:
 		//		ImGui::PopID();
 	}
 
+	//-----------
+	void drawCheckbox()
+	{
+		setOfParameterOnNextFrame();
+
+		getOfParameter();
+
+		ImGui::PushID(this->getName().c_str());
+		ImGui::PushItemWidth(sliderWidth);
+		//		ImGui::Text(this->getName().c_str());
+		ImGui::Checkbox(
+			this->getName().c_str(),//"##Checkbox",
+			&this->value);
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+
+		setOfParameter();
+	}
+
 };
 
 //--------------------------------------------------------------
 class Window : public ofxImGuiParameter<bool> {
 public:
+	Window() {
+//		sharedParams.add(bIsOpen.set("Open", true));
+		paramGroup.add(position.set("Position", ofVec2f(10, 10), ofVec2f(20, 20), ofVec2f(1000, 1000)));
+		paramGroup.add(size.set("Size", ofVec2f(320, 300), ofVec2f(320, 20), ofVec2f(1000, 1000)));
+		paramGroup.add(gridSize.set("Grid Size", ofVec2f(10, 10), ofVec2f(0, 0), ofVec2f(100, 100)));
+		paramGroup.add(name.set("Name", "Untitled"));
+
+		//set window properties
+		bool no_titlebar = false;
+		bool no_border = false;
+		bool no_resize = false;
+		bool no_move = false;
+		bool no_scrollbar = false;
+		bool no_collapse = false;
+		bool no_menu = true;
+		bool no_settings = true;
+
+		if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
+		if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
+		if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
+		if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
+		if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
+		if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
+		if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
+		if (no_settings) window_flags |= ImGuiWindowFlags_NoSavedSettings;
+	}
+
+//	ofxImGuiParameter<bool>	bIsOpen;
+	ofxImGuiParameter<ofVec2f>	position;
+	ofxImGuiParameter<ofVec2f>	size;
+	ofxImGuiParameter<ofVec2f>	gridSize;
+	ofxImGuiParameter<string>	name;
+
+	// ImGui
+	ImGuiWindowFlags window_flags = 0;
+	float bg_alpha = -0.01f; // <0: default
+
 	using  ofxImGuiParameter<bool>::operator=;
-	bool draw() override { return true; }
+	bool drawWidget() override { return true; }
 
 	//-----------
-	bool beginWindow(string& windowName, ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
+	bool begin()//const string& windowName, ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
 	{
+
 		getOfParameter();
 
 		//		ImGui::PushID(this->getName().c_str());
 
 		if (value == true) {
-			//set window properties
-			static bool no_titlebar = false;
-			static bool no_border = false;
-			static bool no_resize = false;
-			static bool no_move = false;
-			static bool no_scrollbar = false;
-			static bool no_collapse = false;
-			static bool no_menu = true;
-			static bool no_settings = true;
-			static float bg_alpha = -0.01f; // <0: default
-
-											// Typically you would just use the default.
-			ImGuiWindowFlags window_flags = 0;
-			if (no_titlebar)  window_flags |= ImGuiWindowFlags_NoTitleBar;
-			if (!no_border)   window_flags |= ImGuiWindowFlags_ShowBorders;
-			if (no_resize)    window_flags |= ImGuiWindowFlags_NoResize;
-			if (no_move)      window_flags |= ImGuiWindowFlags_NoMove;
-			if (no_scrollbar) window_flags |= ImGuiWindowFlags_NoScrollbar;
-			if (no_collapse)  window_flags |= ImGuiWindowFlags_NoCollapse;
-			if (!no_menu)     window_flags |= ImGuiWindowFlags_MenuBar;
-			if (no_settings) window_flags |= ImGuiWindowFlags_NoSavedSettings;
 
 			void  SetNextWindowFocus();
 			bool open;
-			open = ImGui::Begin(windowName.c_str(), &value, ImVec2(size), bg_alpha, window_flags);
+
+			open = ImGui::Begin(name.get().c_str(), &value, ImVec2(size), bg_alpha, window_flags);
 			setOfParameter();
 
 			// set from imgui to of
@@ -495,14 +532,21 @@ public:
 				ImGui::IsWindowHovered() &&
 				ImGui::IsMouseDragging()) {
 
-				ofVec2f pos = ImGui::GetWindowPos();
+				ofVec2f _position = ImGui::GetWindowPos();
+				_position.x = _position.x - ((int)_position.x % (int)gridSize.get().x);
+				_position.y = _position.y - ((int)_position.y % (int)gridSize.get().y);
+
+				ofVec2f _size = ImGui::GetWindowSize();
+				_size.x = _size.x - ((int)_size.x % (int)gridSize.get().x);
+				_size.y = _size.y - ((int)_size.y % (int)gridSize.get().y);
+
 				ofVec2f minpos;
 				minpos.set(
-					MAX(pos.x, 0),
-					MAX(pos.y, 18));
+					MAX(_position.x, 0),
+					MAX(_position.y, 18));
 
 				position.set(minpos);
-				size.set(ImGui::GetWindowSize());
+				size.set(_size);
 			}
 
 			// set from of to imgui
@@ -518,9 +562,30 @@ public:
 		}
 	}
 	//-----------
-	void endWindow()
+	void end()
 	{
 		ImGui::End();
 		//		ImGui::PopID();
+	}
+
+	//-----------
+	void drawCheckbox()
+	{
+		setOfParameterOnNextFrame();
+
+		//getOfParameter();
+		value = this->get();
+
+		ImGui::PushID(name.get().c_str());
+		ImGui::PushItemWidth(sliderWidth);
+		//		ImGui::Text(this->getName().c_str());
+		ImGui::Checkbox(
+			name.get().c_str(),//"##Checkbox",
+			&value);
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+
+		//setOfParameter();
+		this->set(value);
 	}
 };

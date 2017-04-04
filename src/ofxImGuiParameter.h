@@ -7,16 +7,20 @@
 template<typename ParameterType>
 class ofxImGuiParameter: public ofParameter<ParameterType>
 {
+public:
+	ofParameterGroup	paramGroup;
+
 protected:
-	ParameterType	value;//= NULL;
-	ParameterType	oldValue;//= NULL;
+	ParameterType		value;
+	ParameterType		oldValue;
+
 	bool	didChange			= false;
 	bool	needsUpdateOnNextFrame = false;
 	bool	isNextFrame			= false;
 	int		sliderWidth			= 180;
 	int		inputIntWidth		= 100;
 	char	str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
-	virtual bool draw() { return true; };
+	virtual bool drawWidget() { return true; };
 
 public:
 	const int& getSliderWidth() {
@@ -67,14 +71,14 @@ public:
 	//-----------
 	void onUpdate(ofEventArgs& event)
 	{
-		update();
+		updateWidget();
 	}
 	//-----------
 	bool hasChanged() {
 		return didChange;
 	}
 	//-----------
-	bool update()
+	bool updateWidget()
 	{
 		didChange = false;
 		if (this->get() != this->value)
