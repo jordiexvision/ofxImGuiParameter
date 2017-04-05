@@ -58,7 +58,7 @@ public:
 
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
+//		ImGui::Text(this->getName().c_str());
 
 		ImGui::ListBoxHeader("##listbox", 4);
 

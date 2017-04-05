@@ -17,27 +17,23 @@ public:
 
 		getOfParameter();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
+		ImGui::PushItemWidth(width * 0.6f);
 		ImGui::SliderFloat(
 			"##SliderFloat",	//this->getName().c_str(),
 			&this->value,
 			this->getMin(),
-			this->getMax());
+			this->getMax(),
+			this->getName().c_str());
 		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		ImGui::SameLine();
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(inputIntWidth);
+		ImGui::PushItemWidth(width * 0.3f);
 		ImGui::InputFloat("##f1",
 			&this->value,
 			this->getMin(),
 			this->getMax()
 		);
 		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		setOfParameter();
 	}
@@ -56,23 +52,19 @@ public:
 
 		getOfParameter();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
+		ImGui::PushItemWidth(width * 0.6f);
 		ImGui::SliderInt(
 			"##SliderInt",	//this->getName().c_str(),
 			&this->value,
 			this->getMin(),
-			this->getMax());
+			this->getMax(),
+			this->getName().c_str());
 		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		ImGui::SameLine();
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(inputIntWidth);
+		ImGui::PushItemWidth(width * 0.3f);
 		ImGui::InputInt("##i1", &this->value);
 		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		setOfParameter();
 	}
@@ -91,38 +83,22 @@ public:
 	//-----------
 	void drawPlot(int width = 10)
 	{
-//		setOfParameterOnNextFrame();
+		queue[offset] = this->get();
+		offset++;
+		if (offset == size) offset = 0;
 
-//		getOfParameter();
-
-//		ImGui::PushID(this->getName().c_str());
-
-//		if (ImGui::CollapsingHeader(this->getName().c_str())) {
-//			queue[offset] = value;
-			queue[offset] = this->get();
-
-			offset++;
-			if (offset == size) offset = 0;
-//			ImGui::PushID("IntPlot");
-
-			ImGui::PushItemWidth(width);
-			ImGui::PlotHistogram(
-				"##IntPlot", 
-				queue,
-				IM_ARRAYSIZE(queue),
-				offset, 
-				string(this->getName()+" "+ofToString(this->get(), 0)).c_str(),
-				this->getMin(), 
-				this->getMax(), 
-				ImVec2(0, 50)
-			);
-			ImGui::PopItemWidth();
-//			ImGui::PopID();
-//		}
-
-//		ImGui::PopID();
-
-//		setOfParameter();
+		ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth());
+		ImGui::PlotHistogram(
+			"##IntPlot", 
+			queue,
+			IM_ARRAYSIZE(queue),
+			offset, 
+			string(this->getName()+" "+ofToString(this->get(), 0)).c_str(),
+			this->getMin(), 
+			this->getMax(), 
+			ImVec2(0, 50)
+		);
+		ImGui::PopItemWidth();
 	}
 };
 
@@ -139,14 +115,9 @@ public:
 
 		getOfParameter();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		//		ImGui::Text(this->getName().c_str());
 		ImGui::Checkbox(
 			this->getName().c_str(),//"##Checkbox",
 			&this->value);
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		setOfParameter();
 	}
@@ -163,14 +134,11 @@ public:
 	{
 		getOfParameter();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
 		// apply from Client
 		ImGui::SetNextTreeNodeOpen(value);
+
 		// draw and catch input
 		value = ImGui::CollapsingHeader(this->getName().c_str());
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		setOfParameter();
 
@@ -192,10 +160,8 @@ public:
 
 		getOfString();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		static float wrap_width = sliderWidth;
-		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + wrap_width);
+//		static float wrap_width = sliderWidth;
+		ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + width);
 		ImGui::TextWrapped(str);
 
 		// draw custom frame
@@ -206,8 +172,6 @@ public:
 		);
 
 		ImGui::PopTextWrapPos();
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		// don-t need coz imgui will not change it
 		//		setOfString();
@@ -224,8 +188,6 @@ public:
 	{
 		getOfString();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
 		ImGui::Text(this->getName().c_str());
 		if (ImGui::InputText(
 			"##InputText",
@@ -234,8 +196,6 @@ public:
 		)) {
 			setOfString();
 		}
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 	}
 };
 
@@ -250,8 +210,6 @@ public:
 	{
 		getOfString();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
 		ImGui::Text(this->getName().c_str());
 		if (ImGui::InputTextMultiline(
 			"##InputText",
@@ -261,7 +219,6 @@ public:
 		{
 			setOfString();
 		}
-		ImGui::PopItemWidth();
 		ImGui::PopID();
 	}
 };
@@ -277,19 +234,12 @@ public:
 	{
 		getOfParameter();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
 		if (ImGui::Button(this->getName().c_str())) {
-			//			this->set(true);
 			value = true;
 		}
 		else {
-			//			this->set(false);
 			value = false;
 		}
-
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		// don-t need coz imgui will not change it?
 		setOfParameter();
@@ -307,8 +257,6 @@ public:
 	{
 		getOfParameter();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
 		bool isPressed;
 		if (value) {
 			if (ImGui::Button(stringOnTrue.c_str())) {
@@ -320,9 +268,6 @@ public:
 				value = !value;
 			}
 		}
-
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		// don-t need coz imgui will not change it?
 		setOfParameter();
@@ -363,8 +308,6 @@ public:
 
 		getOfParameter();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
 
 		//		if (ImGui::Button(this->getName().c_str())) {
 		if (ImGui::MenuItem(this->getName().c_str(), "", false, !(bool*)this->get())) {
@@ -376,8 +319,6 @@ public:
 
 		drawPopUp(text, width, height);
 
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 	}
 };
@@ -392,8 +333,6 @@ public:
 	bool beginPanel(ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
 	{
 		getOfParameter();
-
-		//		ImGui::PushID(this->getName().c_str());;
 
 		if (value == true) {
 			//set window properties
@@ -444,7 +383,6 @@ public:
 	void endPanel()
 	{
 		ImGui::End();
-		//		ImGui::PopID();
 	}
 
 	//-----------
@@ -454,14 +392,9 @@ public:
 
 		getOfParameter();
 
-		ImGui::PushID(this->getName().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		//		ImGui::Text(this->getName().c_str());
 		ImGui::Checkbox(
 			this->getName().c_str(),//"##Checkbox",
 			&this->value);
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		setOfParameter();
 	}
@@ -475,7 +408,7 @@ public:
 //		sharedParams.add(bIsOpen.set("Open", true));
 		paramGroup.add(position.set("Position", ofVec2f(10, 10), ofVec2f(20, 20), ofVec2f(1000, 1000)));
 		paramGroup.add(size.set("Size", ofVec2f(320, 300), ofVec2f(320, 20), ofVec2f(1000, 1000)));
-		paramGroup.add(gridSize.set("Grid Size", ofVec2f(10, 10), ofVec2f(0, 0), ofVec2f(100, 100)));
+		paramGroup.add(gridSize.set("Grid Size", ofVec2f(20, 20), ofVec2f(0, 0), ofVec2f(100, 100)));
 		paramGroup.add(name.set("Name", "Untitled"));
 
 		//set window properties
@@ -514,10 +447,7 @@ public:
 	//-----------
 	bool begin()//const string& windowName, ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
 	{
-
 		getOfParameter();
-
-		//		ImGui::PushID(this->getName().c_str());
 
 		if (value == true) {
 
@@ -532,18 +462,12 @@ public:
 				ImGui::IsWindowHovered() &&
 				ImGui::IsMouseDragging()) {
 
-				ofVec2f _position = ImGui::GetWindowPos();
-				_position.x = _position.x - ((int)_position.x % (int)gridSize.get().x);
-				_position.y = _position.y - ((int)_position.y % (int)gridSize.get().y);
+				// aplly grid
+				ofVec2f _position = nearest(ImGui::GetWindowPos(), gridSize);
+				ofVec2f _size = nearest(ImGui::GetWindowSize(), gridSize);
 
-				ofVec2f _size = ImGui::GetWindowSize();
-				_size.x = _size.x - ((int)_size.x % (int)gridSize.get().x);
-				_size.y = _size.y - ((int)_size.y % (int)gridSize.get().y);
-
-				ofVec2f minpos;
-				minpos.set(
-					MAX(_position.x, 0),
-					MAX(_position.y, 18));
+				// set minimum position
+				ofVec2f minpos(MAX(_position.x, 0), MAX(_position.y, 18));
 
 				position.set(minpos);
 				size.set(_size);
@@ -565,7 +489,6 @@ public:
 	void end()
 	{
 		ImGui::End();
-		//		ImGui::PopID();
 	}
 
 	//-----------
@@ -576,16 +499,19 @@ public:
 		//getOfParameter();
 		value = this->get();
 
-		ImGui::PushID(name.get().c_str());
-		ImGui::PushItemWidth(sliderWidth);
-		//		ImGui::Text(this->getName().c_str());
 		ImGui::Checkbox(
 			name.get().c_str(),//"##Checkbox",
 			&value);
-		ImGui::PopItemWidth();
-		ImGui::PopID();
 
 		//setOfParameter();
 		this->set(value);
 	}
+
+	ofVec2f nearest(ofVec2f value, ofVec2f multiple) {
+		ofVec2f result;
+		result.x = ((int)value.x + ((int)multiple.x /2)) / (int)multiple.x * (int)multiple.x;
+		result.y = ((int)value.y + ((int)multiple.y /2)) / (int)multiple.y * (int)multiple.y;
+		return result;
+	}
+
 };

@@ -9,6 +9,19 @@ class ofxImGuiParameter: public ofParameter<ParameterType>
 {
 public:
 	ofParameterGroup	paramGroup;
+	virtual bool drawWidget() { return true; };
+	bool draw() {
+
+		ImGui::PushID(this->getName().c_str());
+		ImGui::PushItemWidth(width*.7f);
+
+		bool result = drawWidget();
+
+		ImGui::PopItemWidth();
+		ImGui::PopID();
+
+		return result;
+	};
 
 protected:
 	ParameterType		value;
@@ -17,10 +30,9 @@ protected:
 	bool	didChange			= false;
 	bool	needsUpdateOnNextFrame = false;
 	bool	isNextFrame			= false;
-	int		sliderWidth			= 180;
-	int		inputIntWidth		= 100;
+	int		width				= 300;
 	char	str[OFXIMGUIPARAM_STRING_MAX_LENGTH];
-	virtual bool drawWidget() { return true; };
+
 
 public:
 	const int& getSliderWidth() {

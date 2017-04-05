@@ -54,7 +54,7 @@ public:
 
 		ImGui::PushID(this->getName().c_str());
 		ImGui::PushItemWidth(sliderWidth);
-		ImGui::Text(this->getName().c_str());
+//		ImGui::Text(this->getName().c_str());
 		// use vectors as const char *
 		// https://github.com/ocornut/imgui/issues/673
 		ImGui::Combo("##Combo", &value,
