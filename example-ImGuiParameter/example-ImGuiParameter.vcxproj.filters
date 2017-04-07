@@ -335,9 +335,6 @@
     <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\osc\OscTypes.h">
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxImGuiParameterCombo.h">
-      <Filter>addons\ofxImGuiParameter\src</Filter>
-    </ClInclude>
     <ClInclude Include="..\extras\Camera.h">
       <Filter>addons\ofxImGuiParameter\extras</Filter>
     </ClInclude>
@@ -350,7 +347,7 @@
     <ClInclude Include="..\src\ofxImGuiParameterUtils.h">
       <Filter>addons\ofxImGuiParameter\src</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ofxImGuiParameterListbox.h">
+    <ClInclude Include="..\src\ofxImGuiWidgets.h">
       <Filter>addons\ofxImGuiParameter\src</Filter>
     </ClInclude>
   </ItemGroup>

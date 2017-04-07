@@ -13,15 +13,15 @@ SharedSettings::SharedSettings(){
 
 	//-----------
 	// tests
-	syncParams.add(float_t.set("float test", 0.5f, 0.0f, 1.0f));
-	syncParams.add(int_t.set("int test", 1, 1, 1000));
-	syncParams_b.add(float_t1.set("float test 11111", 0.2f, 0.0f, 1.0f));
-	syncParams_b.add(int_t1.set("syncParams_b", 1234, 1, 1000));
+	syncParams.add(float_t.set("Float test1", 0.5f, 0.0f, 1.0f));
+	syncParams.add(int_t.set("Int test1", 1, 1, 1000));
+	syncParams_b.add(float_t1.set("Float test2", 0.2f, 0.0f, 1.0f));
+	syncParams_b.add(int_t1.set("Int test2", 1234, 1, 1000));
 
 	syncParams.add(bool_t.set("bool test", true));
-	syncParams.add(OSD_string_t.set("OSDtext1", "lorem ipsum1"));
-	syncParams.add(OSD_string_t2.set("OSD text2", "lorem ipsum2"));
-	syncParams.add(OSD_string_t3.set("OSD text3", "lorem ipsum3"));
+	syncParams.add(OSD_string_t.set("OSD text1", "Check values on Server and resend to Client. Check values on Server and resend to Client. Check values on Server and resend to Client. "));
+	syncParams.add(OSD_string_t2.set("OSD text2", "Lorem ipsum2"));
+	syncParams.add(OSD_string_t3.set("OSD text3", "Lorem ipsum3"));
 
 	syncParams.add(button_t.set("button test", false));
 	syncParams.add(Input_string_t.set("Input text field", "try to edit string"));
@@ -101,28 +101,30 @@ void SharedSettings::draw(){
 	gui.begin();
 	
 	if (ImGui::CollapsingHeader("Basic types", false)) {
-		float_t.drawSliderFloat();
-		int_t.drawSliderInt();
-		float_t1.drawSliderFloat();
-		int_t1.drawSliderInt();
-		bool_t.drawCheckbox();
-		button_t.drawButton();
+		float_t.draw();
+		int_t.draw();
+		float_t1.draw();
+		int_t1.draw();
+		bool_t.draw();
+		button_t.draw();
+		button_t.draw();
 
-		OSD_string_t.drawTextWrapped();
-		OSD_string_t2.drawTextWrapped();
-		OSD_string_t3.drawTextWrapped();
+		OSD_string_t.draw();
+		OSD_string_t.draw();
+		OSD_string_t2.draw();
+		OSD_string_t3.draw();
 
-		Input_string_t.drawInputText();
+		Input_string_t.draw();
 		//	sharedSettings.Input_string_t.drawInputTextMultiline();
 
-		combo_options_t.drawInputText();
-		combo_value_t.drawCombo();
+		combo_options_t.draw();
+		combo_value_t.draw();
 		listbox_value_t.drawListbox();
 	}
 
-	if (collapsingHeader_t.drawCollapsingHeader()) {
+	if (collapsingHeader_t.draw()) {
 
-		collapsingHeaderString.drawTextWrapped();
+		collapsingHeaderString.draw();
 
 		popUp_1.drawPopUp(credits);
 		popUp_2.drawPopUp(shortcuts, 400, 300);
@@ -133,9 +135,9 @@ void SharedSettings::draw(){
 		//	sharedSettings.cameraInfoString = sharedSettings.cameraInfoString.get() + " a ";
 		//}
 	}
-	if (bResend.drawCollapsingHeader()) {
-		testResend.drawSliderInt();
-		comboResend_value_t.drawCombo();
+	if (bResend.draw()) {
+		testResend.draw();
+		comboResend_value_t.draw();
 		listboxResend_value_t.drawListbox();
 	}
 

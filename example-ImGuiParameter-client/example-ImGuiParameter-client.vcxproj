@@ -213,8 +213,8 @@
     <ClInclude Include="..\extras\ImGuiTheme.h" />
     <ClInclude Include="..\extras\SharedSettings.h" />
     <ClInclude Include="..\src\ofxImGuiParameter.h" />
-    <ClInclude Include="..\src\ofxImGuiParameterCombo.h" />
     <ClInclude Include="..\src\ofxImGuiParameterUtils.h" />
+    <ClInclude Include="..\src\ofxImGuiWidgets.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxBaseGui.h" />
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxButton.h" />
