@@ -8,7 +8,7 @@ template<typename ParameterType>
 class ofxImGuiParameter: public ofParameter<ParameterType>
 {
 public:
-	ofParameterGroup	paramGroup;
+	ofParameterGroup	settings;
 	virtual bool drawWidget() { return true; };
 	bool draw() {
 

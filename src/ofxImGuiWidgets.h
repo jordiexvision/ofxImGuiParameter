@@ -406,10 +406,11 @@ class Window : public ofxImGuiParameter<bool> {
 public:
 	Window() {
 //		sharedParams.add(bIsOpen.set("Open", true));
-		paramGroup.add(position.set("Position", ofVec2f(10, 10), ofVec2f(20, 20), ofVec2f(1000, 1000)));
-		paramGroup.add(size.set("Size", ofVec2f(320, 300), ofVec2f(320, 20), ofVec2f(1000, 1000)));
-		paramGroup.add(gridSize.set("Grid Size", ofVec2f(20, 20), ofVec2f(0, 0), ofVec2f(100, 100)));
-		paramGroup.add(name.set("Name", "Untitled"));
+		settings.setName("Window Settings");
+		settings.add(position.set("Position", ofVec2f(100, 100), ofVec2f(20, 20), ofVec2f(10000, 10000)));
+		settings.add(size.set("Size", ofVec2f(320, 300), ofVec2f(320, 20), ofVec2f(10000, 10000)));
+		settings.add(gridSize.set("Grid Size", ofVec2f(20, 20), ofVec2f(0, 0), ofVec2f(100, 100)));
+		settings.add(name.set("Name", "Untitled"));
 
 		//set window properties
 		bool no_titlebar = false;
