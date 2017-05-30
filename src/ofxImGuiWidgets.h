@@ -71,7 +71,7 @@ public:
 };
 
 //--------------------------------------------------------------
-class IntPlot : public ofxImGuiParameter<float> {
+class FpsPlot : public ofxImGuiParameter<float> {
 public:
 	using  ofxImGuiParameter<float>::operator=;
 	bool drawWidget() override { drawPlot(); return true; }
@@ -87,13 +87,15 @@ public:
 		offset++;
 		if (offset == size) offset = 0;
 
+		string label = this->getName() + " " + ofToString(this->get(), 1);
+
 		ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth());
 		ImGui::PlotHistogram(
-			"##IntPlot", 
+			"##FpsPlot", 
 			queue,
 			IM_ARRAYSIZE(queue),
 			offset, 
-			string(this->getName()+" "+ofToString(this->get(), 0)).c_str(),
+			label.c_str(),
 			this->getMin(), 
 			this->getMax(), 
 			ImVec2(0, 50)
@@ -573,6 +575,27 @@ private:
 	vector<string> comboItems;
 
 	//-----------
+	void drawCombo()
+	{
+
+		setOfParameterOnNextFrame();
+
+		getOfParameter();
+
+		// use vectors as const char *
+		// https://github.com/ocornut/imgui/issues/673
+		ImGui::Combo("##Combo", &value,
+			[](void* vec, int idx, const char** out_text) {
+			std::vector<std::string>* vector = reinterpret_cast<std::vector<std::string>*>(vec);
+			if (idx < 0 || idx >= vector->size())return false;
+			*out_text = vector->at(idx).c_str();
+			return true;
+		}, reinterpret_cast<void*>(&comboItems), comboItems.size());
+
+		setOfParameter();
+	}
+
+	//-----------
 	int parseOptions(string incoming_str) {
 		if (incoming_str == "") {
 			OFXIMGUIPARAM_VERBOSE << "string is empty!";
@@ -633,27 +656,6 @@ private:
 		}
 		return didChange;
 	}
-
-	//-----------
-	void drawCombo()
-	{
-
-		setOfParameterOnNextFrame();
-
-		getOfParameter();
-
-		// use vectors as const char *
-		// https://github.com/ocornut/imgui/issues/673
-		ImGui::Combo("##Combo", &value,
-			[](void* vec, int idx, const char** out_text) {
-			std::vector<std::string>* vector = reinterpret_cast<std::vector<std::string>*>(vec);
-			if (idx < 0 || idx >= vector->size())return false;
-			*out_text = vector->at(idx).c_str();
-			return true;
-		}, reinterpret_cast<void*>(&comboItems), comboItems.size());
-
-		setOfParameter();
-	}
 };
 
 class ListBox : public ofxImGuiParameter<ofVec4f>{
@@ -670,6 +672,13 @@ public:
 		: stringRef(opt)
 	{
 	};
+
+	const ofParameter<string>& getStringRef() {
+		return stringRef;
+	}
+	const ofVec4f& getOldValueRef() {
+		return oldValue;
+	}
 
 	ofParameter<ofVec4f> & setOptions(const ofVec4f & val) {
 		return setOptions(this->getName(), val, this->getMin(), this->getMax());
@@ -702,6 +711,11 @@ public:
 		return *this;
 	};
 
+private:
+	string options;
+	ofParameter<string>& stringRef;
+	vector<string> comboItems;
+
 	//-----------
 	void drawListbox()
 	{
@@ -730,30 +744,6 @@ public:
 
 		setOfParameter();
 	}
-
-	const ofParameter<string>& getStringRef() {
-		return stringRef;
-	}
-	const ofVec4f& getOldValueRef() {
-		return oldValue;
-	}
-
-	//-----------
-	void setOnNextFrame(const ofVec4f & v)
-	{
-		OFXIMGUIPARAM_VERBOSE << "getName      [" << this->getName() << "]";
-		OFXIMGUIPARAM_VERBOSE << "ofParameter  [" << this->get() << "]";
-		OFXIMGUIPARAM_VERBOSE << "value        [" << value << "]";
-		OFXIMGUIPARAM_VERBOSE << "new value    [" << v << "]";
-
-		value = v;
-		needsUpdateOnNextFrame = true;
-	}
-
-private:
-	string options;
-	ofParameter<string>& stringRef;
-	vector<string> comboItems;
 
 	//-----------
 	int parseOptions(string incoming_str) {
@@ -851,6 +841,5 @@ private:
 		}
 		return didChange;
 	}
-
 };
 
