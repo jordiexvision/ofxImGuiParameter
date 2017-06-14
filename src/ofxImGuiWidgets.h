@@ -448,8 +448,12 @@ public:
 	bool drawWidget() override { return true; }
 
 	//-----------
-	bool begin()//const string& windowName, ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
+	bool begin(ImGuiWindowFlags wf = 0)//const string& windowName, ofParameter<ofVec2f>& position, ofParameter<ofVec2f>& size)
 	{
+		if (wf != 0) {
+			window_flags = wf;
+		}
+
 		getOfParameter();
 
 		if (value == true) {
@@ -465,7 +469,10 @@ public:
 				ImGui::IsWindowHovered() &&
 				ImGui::IsMouseDragging()) {
 
-				// aplly grid
+				// apply grid
+//				ofVec2f windowPos = ofVec2f(ofGetWindowPositionX(), ofGetWindowPositionY());
+//				ofVec2f windowSize = ofVec2f(ofGetWindowWidth(), ofGetWindowHeight());
+
 				ofVec2f _position = nearest(ImGui::GetWindowPos(), gridSize);
 				ofVec2f _size = nearest(ImGui::GetWindowSize(), gridSize);
 
